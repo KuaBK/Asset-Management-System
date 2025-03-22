@@ -1,20 +1,22 @@
 package com.example.asset_management.service;
 
-import com.example.asset_management.dto.request.asset.AssetRequest;
-import com.example.asset_management.dto.response.asset.AssetResponse;
-import com.example.asset_management.entity.building.Building;
-import com.example.asset_management.entity.asset.Asset;
-import com.example.asset_management.entity.room.Room;
-import com.example.asset_management.repository.BuildingRepository;
-import com.example.asset_management.repository.RoomRepository;
-import com.example.asset_management.repository.AssetRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+
+import com.example.asset_management.dto.request.asset.AssetRequest;
+import com.example.asset_management.dto.response.asset.AssetResponse;
+import com.example.asset_management.entity.asset.Asset;
+import com.example.asset_management.entity.building.Building;
+import com.example.asset_management.entity.room.Room;
+import com.example.asset_management.repository.AssetRepository;
+import com.example.asset_management.repository.BuildingRepository;
+import com.example.asset_management.repository.RoomRepository;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -24,20 +26,20 @@ public class AssetService {
     private final RoomRepository roomRepository;
 
     public List<AssetResponse> getAllAsset() {
-        return assetRepository.findAll().stream()
-                .map(this::mapToDTO)
-                .collect(Collectors.toList());
+        return assetRepository.findAll().stream().map(this::mapToDTO).collect(Collectors.toList());
     }
 
     public Optional<AssetResponse> getAssetById(Long id) {
         return assetRepository.findById(id).map(this::mapToDTO);
     }
 
-    public AssetResponse addAsset (AssetRequest dto) {
-        Building building = buildingRepository.findById(dto.getBuildingId())
+    public AssetResponse addAsset(AssetRequest dto) {
+        Building building = buildingRepository
+                .findById(dto.getBuildingId())
                 .orElseThrow(() -> new IllegalArgumentException("Invalid building ID: " + dto.getBuildingId()));
 
-        Room room = roomRepository.findById(dto.getRoomId())
+        Room room = roomRepository
+                .findById(dto.getRoomId())
                 .orElseThrow(() -> new IllegalArgumentException("Invalid room ID: " + dto.getRoomId()));
 
         if (!room.getBuilding().getId().equals(building.getId())) {
@@ -52,11 +54,13 @@ public class AssetService {
         return mapToDTO(asset);
     }
 
-    public Optional<AssetResponse> updateAsset (Long id, AssetRequest dto) {
-        Building building = buildingRepository.findById(dto.getBuildingId())
+    public Optional<AssetResponse> updateAsset(Long id, AssetRequest dto) {
+        Building building = buildingRepository
+                .findById(dto.getBuildingId())
                 .orElseThrow(() -> new IllegalArgumentException("Invalid building ID: " + dto.getBuildingId()));
 
-        Room room = roomRepository.findById(dto.getRoomId())
+        Room room = roomRepository
+                .findById(dto.getRoomId())
                 .orElseThrow(() -> new IllegalArgumentException("Invalid room ID: " + dto.getRoomId()));
 
         if (!room.getBuilding().getId().equals(building.getId())) {
@@ -93,8 +97,7 @@ public class AssetService {
         });
     }
 
-
-    public boolean deleteAsset (Long id) {
+    public boolean deleteAsset(Long id) {
         if (assetRepository.existsById(id)) {
             assetRepository.deleteById(id);
             return true;
@@ -125,10 +128,12 @@ public class AssetService {
     }
 
     private Asset mapToEntity(AssetRequest dto) {
-        Building building = buildingRepository.findById(dto.getBuildingId())
+        Building building = buildingRepository
+                .findById(dto.getBuildingId())
                 .orElseThrow(() -> new IllegalArgumentException("Invalid building ID"));
 
-        Room room = roomRepository.findById(dto.getRoomId())
+        Room room = roomRepository
+                .findById(dto.getRoomId())
                 .orElseThrow(() -> new IllegalArgumentException("Invalid room ID"));
 
         LocalDate expireDate = LocalDate.of(dto.getDateInSystem().getYear() + dto.getEstimatedLife(), 1, 1);
@@ -158,4 +163,3 @@ public class AssetService {
                 .build();
     }
 }
-

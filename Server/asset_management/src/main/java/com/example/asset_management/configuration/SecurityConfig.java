@@ -19,13 +19,19 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
     private static final String[] PUBLIC_ENDPOINTS = {
-            "/auth/login", "/auth/introspect", "/auth/logout", "/auth/refresh",
-
-            "/account/myInfo", "/account", "/account/{id}",
-
-            "/asset", "/asset/{id}", "asset/count/{buildingId}",
-
-            "/report/export-excel", "/report/download", "/report/send",
+        "/auth/login",
+        "/auth/introspect",
+        "/auth/logout",
+        "/auth/refresh",
+        "/account/myInfo",
+        "/account",
+        "/account/{id}",
+        "/asset",
+        "/asset/{id}",
+        "asset/count/{buildingId}",
+        "/report/export-excel",
+        "/report/download",
+        "/report/send",
     };
 
     private final CustomJwtDecoder customJwtDecoder;

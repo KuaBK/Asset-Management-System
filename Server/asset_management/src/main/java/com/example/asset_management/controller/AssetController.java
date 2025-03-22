@@ -1,18 +1,20 @@
 package com.example.asset_management.controller;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
 import com.example.asset_management.dto.request.asset.AssetRequest;
 import com.example.asset_management.dto.response.ApiResponse;
 import com.example.asset_management.dto.response.asset.AssetResponse;
 import com.example.asset_management.repository.AssetRepository;
 import com.example.asset_management.service.AssetService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/asset")
@@ -31,7 +33,8 @@ public class AssetController {
     public ResponseEntity<ApiResponse<AssetResponse>> getAssetById(@PathVariable Long id) {
         Optional<AssetResponse> asset = assetService.getAssetById(id);
         return asset.map(a -> ResponseEntity.ok(new ApiResponse<>(200, "Success", a)))
-                .orElseGet(() -> ResponseEntity.status(404).body(new ApiResponse<>(404, "Student Desk not found", null)));
+                .orElseGet(
+                        () -> ResponseEntity.status(404).body(new ApiResponse<>(404, "Student Desk not found", null)));
     }
 
     @PostMapping
@@ -41,10 +44,12 @@ public class AssetController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<AssetResponse>> updateAsset(@PathVariable Long id, @RequestBody AssetRequest dto) {
+    public ResponseEntity<ApiResponse<AssetResponse>> updateAsset(
+            @PathVariable Long id, @RequestBody AssetRequest dto) {
         Optional<AssetResponse> asset = assetService.updateAsset(id, dto);
         return asset.map(a -> ResponseEntity.ok(new ApiResponse<>(200, "Updated successfully", a)))
-                .orElseGet(() -> ResponseEntity.status(404).body(new ApiResponse<>(404, "Student Desk not found", null)));
+                .orElseGet(
+                        () -> ResponseEntity.status(404).body(new ApiResponse<>(404, "Student Desk not found", null)));
     }
 
     @DeleteMapping("/{id}")

@@ -1,11 +1,12 @@
 package com.example.asset_management.repository;
 
-import com.example.asset_management.entity.asset.Asset;
-import com.example.asset_management.entity.asset.AssetType;
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
+import com.example.asset_management.entity.asset.Asset;
+import com.example.asset_management.entity.asset.AssetType;
 
 @Repository
 public interface AssetRepository extends JpaRepository<Asset, Long> {
@@ -22,6 +23,8 @@ public interface AssetRepository extends JpaRepository<Asset, Long> {
     List<Asset> findAll();
 
     long countByBuildingId(Long buildingId);
+
     long countByBuildingIdAndIsBrokenTrue(Long buildingId);
+
     long countByBuildingIdAndIsBrokenFalse(Long buildingId);
 }

@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { Outlet } from "react-router-dom";
 import Sidebar from "./Sidebar";
+import BuildingDetail from "./BuildingDetail";
 
 const Home = () => {
-    const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
+  const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
 
   const toggleSidebar = () => {
     setIsSidebarExpanded(!isSidebarExpanded);

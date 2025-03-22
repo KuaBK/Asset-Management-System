@@ -3,15 +3,17 @@ package com.example.asset_management.controller;
 import java.util.List;
 import java.util.Optional;
 
+import jakarta.validation.Valid;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
 import com.example.asset_management.dto.request.account.AccountCreationRequest;
 import com.example.asset_management.dto.request.account.AccountUpdateRequest;
 import com.example.asset_management.dto.response.ApiResponse;
 import com.example.asset_management.dto.response.account.AccountResponse;
 import com.example.asset_management.service.AccountService;
-import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -95,9 +97,7 @@ public class AccountController {
                     .build();
             return new ResponseEntity<>(response, HttpStatus.OK);
         } else {
-            response = ApiResponse.<Void>builder()
-                    .message("Account not found")
-                    .build();
+            response = ApiResponse.<Void>builder().message("Account not found").build();
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
     }
