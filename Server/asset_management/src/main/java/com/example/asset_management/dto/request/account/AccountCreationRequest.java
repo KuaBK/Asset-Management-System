@@ -1,6 +1,5 @@
 package com.example.asset_management.dto.request.account;
 
-import com.example.asset_management.entity.account.Role;
 import jakarta.validation.constraints.Size;
 
 import lombok.*;

@@ -1,11 +1,13 @@
 package com.example.asset_management.report;
 
-import com.example.asset_management.entity.asset.Asset;
-import com.example.asset_management.repository.AssetRepository;
-import com.example.asset_management.service.AssetService;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.time.Year;
+import java.util.List;
+
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
-import lombok.RequiredArgsConstructor;
+
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -14,10 +16,12 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.time.Year;
-import java.util.List;
+
+import com.example.asset_management.entity.asset.Asset;
+import com.example.asset_management.repository.AssetRepository;
+import com.example.asset_management.service.AssetService;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -25,7 +29,6 @@ public class EmailService {
     private final JavaMailSender mailSender;
     private final AssetService assetService;
     private final AssetRepository assetRepository;
-
 
     public File generateExcelReport(List<Asset> tables) throws Exception {
         Workbook workbook = new XSSFWorkbook();
@@ -37,10 +40,22 @@ public class EmailService {
             int startRow = rowIndex;
 
             String[] headers = {
-                    "ID", "Building", "Room",
-                    "Series", "isBroken", "Brand", "Model", "Type", "material", "Product Year",
-                    "Date In System", "Expire Date", "Estimated Life",
-                    "Original Value", "Depreciation Value", "Residual Value"
+                "ID",
+                "Building",
+                "Room",
+                "Series",
+                "isBroken",
+                "Brand",
+                "Model",
+                "Type",
+                "material",
+                "Product Year",
+                "Date In System",
+                "Expire Date",
+                "Estimated Life",
+                "Original Value",
+                "Depreciation Value",
+                "Residual Value"
             };
 
             for (String header : headers) {
@@ -49,8 +64,10 @@ public class EmailService {
 
                 switch (header) {
                     case "ID" -> row.createCell(1).setCellValue(table.getId());
-                    case "Building" -> row.createCell(1).setCellValue(table.getBuilding().getName());
-                    case "Room" -> row.createCell(1).setCellValue(table.getRoom().getRoomNumber());
+                    case "Building" -> row.createCell(1)
+                            .setCellValue(table.getBuilding().getName());
+                    case "Room" -> row.createCell(1)
+                            .setCellValue(table.getRoom().getRoomNumber());
 
                     case "Series" -> row.createCell(1).setCellValue(table.getSeries());
                     case "isBroken" -> row.createCell(1).setCellValue(table.getIsBroken());
@@ -60,9 +77,11 @@ public class EmailService {
                     case "material" -> row.createCell(1).setCellValue(table.getMaterial());
                     case "Product Year" -> row.createCell(1).setCellValue(table.getProductYear());
 
-                    case "Date In System" -> row.createCell(1).setCellValue(table.getDateInSystem().toString());
+                    case "Date In System" -> row.createCell(1)
+                            .setCellValue(table.getDateInSystem().toString());
                     case "Estimated Life" -> row.createCell(1).setCellValue(table.getEstimatedLife() + " years");
-                    case "Expire Date" -> row.createCell(1).setCellValue(table.getExpireDate().toString());
+                    case "Expire Date" -> row.createCell(1)
+                            .setCellValue(table.getExpireDate().toString());
 
                     case "Original Value" -> row.createCell(1).setCellValue(table.getOriginalValue());
                     case "Depreciation Value" -> row.createCell(1).setCellValue(table.getDepreciationValue());
@@ -84,7 +103,9 @@ public class EmailService {
             int depreciationRowIndex = startRow + 1;
 
             while (remainingValue >= 0) {
-                Row row = sheet.getRow(depreciationRowIndex) != null ? sheet.getRow(depreciationRowIndex) : sheet.createRow(depreciationRowIndex);
+                Row row = sheet.getRow(depreciationRowIndex) != null
+                        ? sheet.getRow(depreciationRowIndex)
+                        : sheet.createRow(depreciationRowIndex);
                 row.createCell(3).setCellValue(year);
                 row.createCell(4).setCellValue(remainingValue);
 
@@ -130,8 +151,7 @@ public class EmailService {
                     "tuanphonglqd@gmail.com",
                     "Báo cáo khấu hao tài sản hàng năm",
                     "Báo cáo khấu hao tài sản năm" + currentYear,
-                    reportFile
-            );
+                    reportFile);
             reportFile.delete();
         } catch (Exception e) {
             e.printStackTrace();
