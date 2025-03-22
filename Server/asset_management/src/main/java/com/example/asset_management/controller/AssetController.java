@@ -4,8 +4,11 @@ import com.example.asset_management.dto.request.asset.AssetRequest;
 import com.example.asset_management.dto.response.ApiResponse;
 import com.example.asset_management.dto.response.asset.AssetResponse;
 import com.example.asset_management.entity.asset.Asset;
+import com.example.asset_management.entity.asset.AssetType;
 import com.example.asset_management.repository.AssetRepository;
+import com.example.asset_management.repository.RoomRepository;
 import com.example.asset_management.service.AssetService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,9 +21,11 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/asset")
 @RequiredArgsConstructor
+@Tag(name = "Asset Controller", description = "Quản lý tài sản")
 public class AssetController {
     private final AssetService assetService;
     private final AssetRepository assetRepository;
+    private final RoomRepository roomRepository;
 
     @GetMapping
     public ResponseEntity<ApiResponse<List<AssetResponse>>> getAllAsset() {
@@ -73,16 +78,40 @@ public class AssetController {
     }
 
     @GetMapping("/list")
-    public ResponseEntity<List<Asset>> getAssetsByBuildingAndRoom( @RequestParam Long buildingId,
-                                                                   @RequestParam Long roomId) {
-        List<Asset> assets = assetRepository.findByBuildingIdAndRoomId(buildingId, roomId);
-        return ResponseEntity.ok(assets);
+    public ResponseEntity<?> getTablesInRoom(@RequestParam Long buildingId,
+                                             @RequestParam Long roomId,
+                                             @RequestParam AssetType assetType) {
+
+        if (!roomRepository.existsByIdAndBuildingId(roomId, buildingId)) {
+            return ResponseEntity.badRequest().body("Room ID " + roomId + " không thuộc Building ID " + buildingId);
+        }
+
+        List<Asset> assets = assetRepository.findByBuildingIdAndRoomIdAndAssetType(buildingId, roomId, assetType);
+
+        Long totalAssets = assetRepository.countAssetsByBuildingAndRoomAndType(buildingId, roomId, assetType);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("items", assets);
+        response.put("items", totalAssets);
+
+        return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/broken")
-    public ResponseEntity<List<Asset>> getBrokenAssetsByBuildingAndRoom(@RequestParam Long buildingId,
-                                                                        @RequestParam Long roomId) {
-        List<Asset> brokenAssets = assetRepository.findByBuildingIdAndRoomIdAndIsBrokenTrue(buildingId, roomId);
-        return ResponseEntity.ok(brokenAssets);
+    @GetMapping("list/broken")
+    public ResponseEntity<?> getBrokenAssetsByBuildingAndRoom(@RequestParam Long buildingId,
+                                                              @RequestParam Long roomId,
+                                                              @RequestParam AssetType assetType) {
+        if (!roomRepository.existsByIdAndBuildingId(roomId, buildingId)) {
+            return ResponseEntity.badRequest().body("Room ID " + roomId + " không thuộc Building ID " + buildingId);
+        }
+        List<Asset> brokenAssets = assetRepository.findByBuildingIdAndRoomIdAndAssetTypeAndIsBrokenTrue(buildingId, roomId, assetType);
+
+        Long totalBrokenAssets = assetRepository.countBrokenAssetsByBuildingAndRoomAndType(buildingId, roomId, assetType);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("brokenTables", brokenAssets);
+        response.put("totalBrokenTables", totalBrokenAssets);
+
+        return ResponseEntity.ok(response);
     }
 }
