@@ -3,6 +3,7 @@ package com.example.asset_management.controller;
 import com.example.asset_management.dto.request.asset.AssetRequest;
 import com.example.asset_management.dto.response.ApiResponse;
 import com.example.asset_management.dto.response.asset.AssetResponse;
+import com.example.asset_management.entity.asset.Asset;
 import com.example.asset_management.repository.AssetRepository;
 import com.example.asset_management.service.AssetService;
 import lombok.RequiredArgsConstructor;
@@ -69,5 +70,19 @@ public class AssetController {
         response.put("available", availableAssets);
 
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/list")
+    public ResponseEntity<List<Asset>> getAssetsByBuildingAndRoom( @RequestParam Long buildingId,
+                                                                   @RequestParam Long roomId) {
+        List<Asset> assets = assetRepository.findByBuildingIdAndRoomId(buildingId, roomId);
+        return ResponseEntity.ok(assets);
+    }
+
+    @GetMapping("/broken")
+    public ResponseEntity<List<Asset>> getBrokenAssetsByBuildingAndRoom(@RequestParam Long buildingId,
+                                                                        @RequestParam Long roomId) {
+        List<Asset> brokenAssets = assetRepository.findByBuildingIdAndRoomIdAndIsBrokenTrue(buildingId, roomId);
+        return ResponseEntity.ok(brokenAssets);
     }
 }

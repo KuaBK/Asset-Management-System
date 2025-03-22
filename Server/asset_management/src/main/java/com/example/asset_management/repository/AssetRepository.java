@@ -21,6 +21,8 @@ public interface AssetRepository extends JpaRepository<Asset, Long> {
 
     List<Asset> findAll();
 
+    List<Asset> findByBuildingIdAndRoomIdAndIsBrokenTrue(Long buildingId, Long roomId);
+
     long countByBuildingId(Long buildingId);
     long countByBuildingIdAndIsBrokenTrue(Long buildingId);
     long countByBuildingIdAndIsBrokenFalse(Long buildingId);
