@@ -1,0 +1,36 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+
+spring:
+  datasource:
+    url: ${DATABASE_URL}
+    driverClassName: "com.mysql.cj.jdbc.Driver"
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: tuanphonglqd@gmail.com
+    password: frtf trrl tzkl cqbj
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+jwt:
+  signerKey: "1TjXchw5FloESb63Kc+DFhTARvpWL4jUGCwfGWxuG5SIf/1y/LgJxHnMqaF6A/ij"
+  valid-duration: 3600 #seconds
+  refreshable-duration: 36000 #seconds
+
+cloudinary:
+  cloud_name: "dkamugos5"
+  api_key: "699183452242579"
+  api_secret: "1pFbBUoout8BGSR0jf2zidml8s8"
