@@ -55,9 +55,9 @@ public class AssetController {
     public ResponseEntity<ApiResponse<String>> deleteAsset(@PathVariable Long id) {
         boolean deleted = assetService.deleteAsset(id);
         if (deleted) {
-            return ResponseEntity.ok(new ApiResponse<>(200, "Deleted successfully", "Student Desk deleted"));
+            return ResponseEntity.ok(new ApiResponse<>(200, "Deleted successfully", "Asset deleted"));
         } else {
-            return ResponseEntity.status(404).body(new ApiResponse<>(404, "Student Desk not found", null));
+            return ResponseEntity.status(404).body(new ApiResponse<>(404, "Asset not found", null));
         }
     }
 
@@ -68,9 +68,9 @@ public class AssetController {
         long availableAssets = assetRepository.countByBuildingIdAndIsBrokenFalse(buildingId);
 
         Map<String, Long> response = new HashMap<>();
-        response.put("total", totalAssets);
-        response.put("broken", brokenAssets);
-        response.put("available", availableAssets);
+        response.put("Total", totalAssets);
+        response.put("Broken", brokenAssets);
+        response.put("Available", availableAssets);
 
         return ResponseEntity.ok(response);
     }
@@ -89,13 +89,13 @@ public class AssetController {
         Long totalAssets = assetRepository.countAssetsByBuildingAndRoomAndType(buildingId, roomId, assetType);
 
         Map<String, Object> response = new HashMap<>();
-        response.put("items", assets);
-        response.put("items", totalAssets);
+        response.put("List Assets", assets);
+        response.put("Assets Quantity", totalAssets);
 
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("list/broken")
+    @GetMapping("/list/broken")
     public ResponseEntity<?> getBrokenAssetsByBuildingAndRoom(@RequestParam Long buildingId,
                                                               @RequestParam Long roomId,
                                                               @RequestParam AssetType assetType) {
@@ -107,11 +107,9 @@ public class AssetController {
         Long totalBrokenAssets = assetRepository.countBrokenAssetsByBuildingAndRoomAndType(buildingId, roomId, assetType);
 
         Map<String, Object> response = new HashMap<>();
-        response.put("brokenTables", brokenAssets);
-        response.put("totalBrokenTables", totalBrokenAssets);
+        response.put("List Broken Assets", brokenAssets);
+        response.put("Total Broken Assets", totalBrokenAssets);
 
         return ResponseEntity.ok(response);
     }
-
-
 }

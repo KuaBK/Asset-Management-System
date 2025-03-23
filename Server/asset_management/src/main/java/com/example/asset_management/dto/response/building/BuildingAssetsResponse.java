@@ -13,8 +13,9 @@ import lombok.experimental.FieldDefaults;
 public class BuildingAssetsResponse {
     Long id;
     String name;
+    Long totalRooms;
     AssetSummaryResponse assets;
-    AssetCategoryResponse teacherTableSet;
+    AssetCategoryResponse teacherChair;
     AssetCategoryResponse studentDesk;
     AssetCategoryResponse blackboard;
     AssetCategoryResponse projector;

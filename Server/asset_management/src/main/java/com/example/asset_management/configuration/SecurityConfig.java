@@ -23,11 +23,11 @@ public class SecurityConfig {
 
             "/account/myInfo", "/account", "/account/{id}",
 
-            "/asset", "/asset/{id}", "asset/count/{buildingId}", "/asset/broken",  "/asset/list",
+            "/asset", "/asset/{id}", "asset/count/{buildingId}", "/asset/list/broken",  "/asset/list",
 
             "/report/export-excel", "/report/download", "/report/send",
 
-            "/buildings/assets-summary", "/buildings/total/infor"
+            "/buildings/assets-summary", "/buildings/total/infor", "/buildings/everyBuilding/infor"
     };
 
     private final CustomJwtDecoder customJwtDecoder;

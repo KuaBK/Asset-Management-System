@@ -46,8 +46,9 @@ public class BuildingController {
             return BuildingAssetsResponse.builder()
                     .id(building.getId())
                     .name(building.getName())
+                    .totalRooms((long) building.getRooms().size())
                     .assets(new AssetSummaryResponse(totalAssets, brokenAssets))
-                    .teacherTableSet(new AssetCategoryResponse(totalByType.getOrDefault(AssetType.STUDENT_DESK, 0L).intValue(),
+                    .teacherChair(new AssetCategoryResponse(totalByType.getOrDefault(AssetType.STUDENT_DESK, 0L).intValue(),
                             brokenByType.getOrDefault(AssetType.STUDENT_DESK, 0L).intValue()))
                     .studentDesk(new AssetCategoryResponse(totalByType.getOrDefault(AssetType.TEACHER_CHAIR, 0L).intValue(),
                             brokenByType.getOrDefault(AssetType.TEACHER_CHAIR, 0L).intValue()))
