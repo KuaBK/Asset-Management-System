@@ -1,6 +1,5 @@
 package com.example.asset_management.configuration;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -27,12 +26,14 @@ public class SecurityConfig {
 
             "/report/export-excel", "/report/download", "/report/send",
 
-            "/buildings/assets-summary", "/buildings/total/infor", "/buildings/everyBuilding/infor"
+            "/buildings/assets-summary", "/buildings/total/infor", "/buildings/everyBuilding/infor",
+
+            "/room/infor/{buildingId}"
     };
 
     private final CustomJwtDecoder customJwtDecoder;
 
-    @Autowired
+    //@Autowired
     public SecurityConfig(CustomJwtDecoder customJwtDecoder) {
         this.customJwtDecoder = customJwtDecoder;
     }
