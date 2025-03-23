@@ -10,6 +10,6 @@ public class OpenAPIConfig {
 
     @Bean
     public OpenAPI openAPI() {
-        return new OpenAPI().info(new Info().title("API-service document"));
+        return new OpenAPI().info(new Info().title("API-service Document"));
     }
 }

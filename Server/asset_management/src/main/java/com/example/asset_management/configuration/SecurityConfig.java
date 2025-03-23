@@ -27,7 +27,7 @@ public class SecurityConfig {
 
             "/report/export-excel", "/report/download", "/report/send",
 
-            "/swagger-ui/index.html",
+            "/buildings/assets-summary", "/buildings/total/infor"
     };
 
     private final CustomJwtDecoder customJwtDecoder;

@@ -42,4 +42,7 @@ public interface AssetRepository extends JpaRepository<Asset, Long> {
     Long countBrokenAssetsByBuildingAndRoomAndType(@Param("buildingId") Long buildingId,
                                                    @Param("roomId") Long roomId,
                                                    @Param("assetType") AssetType assetType);
+
+    long count();
+    long countByIsBrokenFalse();
 }

@@ -8,7 +8,6 @@ import com.example.asset_management.entity.asset.AssetType;
 import com.example.asset_management.repository.AssetRepository;
 import com.example.asset_management.repository.RoomRepository;
 import com.example.asset_management.service.AssetService;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,7 +20,6 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/asset")
 @RequiredArgsConstructor
-@Tag(name = "Asset Controller", description = "Quản lý tài sản")
 public class AssetController {
     private final AssetService assetService;
     private final AssetRepository assetRepository;
@@ -114,4 +112,6 @@ public class AssetController {
 
         return ResponseEntity.ok(response);
     }
+
+
 }
