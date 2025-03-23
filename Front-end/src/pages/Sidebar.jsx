@@ -4,16 +4,17 @@ import { PiNotePencilDuotone } from "react-icons/pi";
 import { GrMoney } from "react-icons/gr";
 import { BiLogOut } from "react-icons/bi";
 import { useState } from "react";
+import buildicon from '../assets/buildicon.svg';
 
 const Sidebar = ({ expanded, toggleSidebar }) => {
   const [isLogoHidden, setIsLogoHidden] = useState(false);
   return (
     <div
-      className={`fixed top-0 left-0 flex flex-col h-screen transition-all duration-300
+      className={`flex flex-col h-[100%] transition-all duration-300
         bg-[#031C30] text-[#edf2f7] ${expanded ? "w-[250px]" : "w-[80px]"}`}
     >
       {/* Sidebar Header */}
-      <div className="flex flex-col items-center pt-4">
+      {/* <div className="flex flex-col items-center pt-4">
         <div className="relative flex items-center justify-center w-full">
           <span
             className={`flex-1 text-center font-bold text-lg transition-opacity duration-300 
@@ -30,20 +31,60 @@ const Sidebar = ({ expanded, toggleSidebar }) => {
           </button>
         </div>
       </div>
-      <div className="my-2 mt-8 border w-full border-gray-600"></div>
+      <div className="my-2 mt-8 border w-full border-gray-600"></div> */}
+      <div className="h-[100px] bg-[rgb(0,185,219)] "></div>
 
       {/* Navigation Links */}
-      <div className="flex flex-col flex-grow text-lg font-medium bg-[rgb(0,185,219)] ">
+      <div className="h-[100%] text-lg font-medium bg-[rgb(0,185,219)]">
         <NavLink
-          to="/building" end
+          to="overview" end
           className={({ isActive }) =>
-            `flex flex-1 items-center p-2 hover:bg-gray-600 transition-colors ${
-              isActive ? "bg-blue-700" : ""
+            `flex items-center justify-start mx-[20px] text-[25px] p-2 hover:bg-[#ffffff]  hover:text-[rgb(0,185,219)] transition-colors my-[20px] rounded-[30px] h-[50px] ${isActive ? "bg-[#ffffff] text-[rgb(0,185,219)]" : ""
             }`
           }
         >
           <FaHome />
-          {expanded && <span className="ml-2">BKB1</span>}
+          {expanded && <span className="ml-2">All Buildings</span>}
+        </NavLink>
+        <NavLink
+          to="detail/h1" end
+          className={({ isActive }) =>
+            `flex items-center justify-start mx-[20px] text-[25px] p-2 hover:bg-[#ffffff]  hover:text-[rgb(0,185,219)] transition-colors my-[20px] rounded-[30px] h-[50px] ${isActive ? "bg-[#ffffff] text-[rgb(0,185,219)]" : ""
+            }`
+          }
+        >
+          <FaHome />
+          {expanded && <span className="ml-2">BK.H1</span>}
+        </NavLink>
+        <NavLink
+          to="detail/h2" end
+          className={({ isActive }) =>
+            `flex items-center justify-start mx-[20px] text-[25px] p-2 hover:bg-[#ffffff]  hover:text-[rgb(0,185,219)] transition-colors my-[20px] rounded-[30px] h-[50px] ${isActive ? "bg-[#ffffff] text-[rgb(0,185,219)]" : ""
+            }`
+          }
+        >
+          <FaHome />
+          {expanded && <span className="ml-2">BK.H2</span>}
+        </NavLink>
+        <NavLink
+          to="detail/h3" end
+          className={({ isActive }) =>
+            `flex items-center justify-start mx-[20px] text-[25px] p-2 hover:bg-[#ffffff]  hover:text-[rgb(0,185,219)] transition-colors my-[20px] rounded-[30px] h-[50px] ${isActive ? "bg-[#ffffff] text-[rgb(0,185,219)]" : ""
+            }`
+          }
+        >
+          <FaHome />
+          {expanded && <span className="ml-2">BK.H3</span>}
+        </NavLink>
+        <NavLink
+          to="detail/h6" end
+          className={({ isActive }) =>
+            `flex items-center justify-start mx-[20px] text-[25px] p-2 hover:bg-[#ffffff]  hover:text-[rgb(0,185,219)] transition-colors my-[20px] rounded-[30px] h-[50px] ${isActive ? "bg-[#ffffff] text-[rgb(0,185,219)]" : ""
+            }`
+          }
+        >
+          <FaHome />
+          {expanded && <span className="ml-2">BK.H6</span>}
         </NavLink>
 
 

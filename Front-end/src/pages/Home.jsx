@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Outlet } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import BuildingDetail from "./BuildingDetail";
+import Header from "../components/Header";
 
 const Home = () => {
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
@@ -11,12 +12,16 @@ const Home = () => {
   };
 
   return (
-    <div className="flex min-h-screen">
+    <div className="h-screen flex flex-col">
+      <Header />
       {/* Sidebar */}
-      <Sidebar expanded={isSidebarExpanded} toggleSidebar={toggleSidebar} />
-      <div className="p-5 ml-[250px] flex-grow bg-gray-200">
-        <Outlet/>
+      <div className="flex flex-1">
+        <Sidebar expanded={isSidebarExpanded} toggleSidebar={toggleSidebar} />
+        <div className="p-5 flex-grow bg-white">
+          <Outlet />
+        </div>
       </div>
+
     </div>
   );
 };
