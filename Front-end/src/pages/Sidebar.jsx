@@ -33,7 +33,7 @@ const Sidebar = ({ expanded, toggleSidebar }) => {
       <div className="my-2 mt-8 border w-full border-gray-600"></div>
 
       {/* Navigation Links */}
-      <div className="flex flex-col flex-grow text-lg font-medium">
+      <div className="flex flex-col flex-grow text-lg font-medium bg-[rgb(0,185,219)] ">
         <NavLink
           to="/building" end
           className={({ isActive }) =>
@@ -43,44 +43,9 @@ const Sidebar = ({ expanded, toggleSidebar }) => {
           }
         >
           <FaHome />
-          {expanded && <span className="ml-2">Tòa nhà 1</span>}
+          {expanded && <span className="ml-2">BKB1</span>}
         </NavLink>
 
-        <NavLink
-          to="/building" end
-          className={({ isActive }) =>
-            `flex flex-1 items-center p-2 hover:bg-gray-600 transition-colors ${
-              isActive ? "bg-blue-700" : ""
-            }`
-          }
-        >
-          <FaHome />
-          {expanded && <span className="ml-2">Tòa nhà 2</span>}
-        </NavLink>
-
-        <NavLink
-          to="/building" end
-          className={({ isActive }) =>
-            `flex flex-1 items-center p-2 hover:bg-gray-600 transition-colors ${
-              isActive ? "bg-blue-700" : ""
-            }`
-          }
-        >
-          <FaHome />
-          {expanded && <span className="ml-2">Tòa nhà 3</span>}
-        </NavLink>
-
-        <NavLink
-          to="/building" end
-          className={({ isActive }) =>
-            `flex flex-1 items-center p-2 hover:bg-gray-600 transition-colors ${
-              isActive ? "bg-blue-700" : ""
-            }`
-          }
-        >
-          <FaHome />
-          {expanded && <span className="ml-2">Tòa nhà 4</span>}
-        </NavLink>
 
       </div>
     </div>
