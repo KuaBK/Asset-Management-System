@@ -4,8 +4,6 @@ import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import com.example.asset_management.entity.asset.Asset;
 import com.example.asset_management.entity.asset.AssetType;
-import com.example.asset_management.entity.building.Building;
-import com.example.asset_management.entity.room.Room;
 import com.example.asset_management.repository.AssetRepository;
 import com.example.asset_management.repository.BuildingRepository;
 import com.example.asset_management.repository.RoomRepository;
@@ -29,14 +27,12 @@ public class ReportService {
 
 
     public String generateAndUploadExcel(Long buildingId, Long roomId, AssetType assetType) throws Exception {
-
         if (buildingId != 0 && !buildingRepository.existsById(buildingId)) {
             throw new IllegalArgumentException("Invalid building ID: " + buildingId);
         }
         if (roomId != 0 && !roomRepository.existsById(roomId)) {
             throw new IllegalArgumentException("Invalid room ID: " + roomId);
         }
-
         if (assetType == null) {
             throw new IllegalArgumentException("Asset Type không hợp lệ!");
         }
@@ -73,7 +69,7 @@ public class ReportService {
                     "AssetType", "Building", "Room",
                     "Series", "isBroken", "Brand", "Model", "Type", "material", "Product Year",
                     "Date In System", "Expire Date", "Estimated Life",
-                    "Original Value", "Depreciation Value", "Residual Value"
+                    "Original Value", "Depreciation Rate", "Residual Value"
             };
 
             for (String header : headers) {
@@ -97,39 +93,42 @@ public class ReportService {
                     case "Estimated Life" -> row.createCell(1).setCellValue(asset.getEstimatedLife() + " years");
                     case "Expire Date" -> row.createCell(1).setCellValue(asset.getExpireDate().toString());
 
-                    case "Original Value" -> row.createCell(1).setCellValue(asset.getOriginalValue());
-                    case "Depreciation Value" -> row.createCell(1).setCellValue(asset.getDepreciationValue());
-                    case "Residual Value" -> row.createCell(1).setCellValue(asset.getResidualValue());
+                    case "Original Value" -> row.createCell(1).setCellValue(asset.getOriginalValue().intValue() + " USD");
+                    case "Depreciation Rate" -> row.createCell(1).setCellValue(asset.getDepreciationRate());
+                    case "Residual Value" -> row.createCell(1).setCellValue(asset.getResidualValue().intValue() + " USD");
                 }
                 rowIndex++;
             }
 
             Row headerRow = sheet.getRow(startRow) != null ? sheet.getRow(startRow) : sheet.createRow(startRow);
-            headerRow.createCell(3).setCellValue("Year");
-            headerRow.createCell(4).setCellValue("Residual Value");
+            headerRow.createCell(4).setCellValue("Year");
+            headerRow.createCell(5).setCellValue("Residual Value");
 
             int startYear = asset.getDateInSystem().getYear();
             double originalValue = asset.getOriginalValue();
-            double depreciationPerYear = asset.getDepreciationValue();
+            double depreciationRate = asset.getDepreciationRate();
             double remainingValue = originalValue;
 
             int year = startYear;
             int depreciationRowIndex = startRow + 1;
 
-            while (remainingValue >= 0) {
+            while (remainingValue >= 0 && year <= asset.getExpireDate().getYear()) {
                 Row row = sheet.getRow(depreciationRowIndex) != null ? sheet.getRow(depreciationRowIndex) : sheet.createRow(depreciationRowIndex);
-                row.createCell(3).setCellValue(year);
-                row.createCell(4).setCellValue(remainingValue);
+                row.createCell(4).setCellValue(year);
+                row.createCell(5).setCellValue(remainingValue);
 
-                remainingValue -= depreciationPerYear;
-                if (remainingValue < 0) break;
+                if (remainingValue == 0) break;
+
+                remainingValue *= (1 - depreciationRate);
+
+                if(remainingValue > 0 && remainingValue <1){
+                    remainingValue = 0;
+                }
                 year++;
                 depreciationRowIndex++;
             }
-
             rowIndex = Math.max(rowIndex, depreciationRowIndex) + 2;
         }
-
 
         File tempFile = File.createTempFile("depreciation_report", ".xlsx");
         try (FileOutputStream fileOut = new FileOutputStream(tempFile)) {

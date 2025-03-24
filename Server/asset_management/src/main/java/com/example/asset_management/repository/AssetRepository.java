@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 
 @Repository
@@ -22,8 +24,6 @@ public interface AssetRepository extends JpaRepository<Asset, Long> {
     List<Asset> findByAssetType(AssetType assetType);
 
     List<Asset> findAll();
-
-    List<Asset> findByBuildingIdAndRoomIdAndIsBrokenTrue(Long buildingId, Long roomId);
 
     long countByBuildingId(Long buildingId);
 
@@ -51,4 +51,8 @@ public interface AssetRepository extends JpaRepository<Asset, Long> {
     long countByRoomIdAndIsBrokenFalse(Long roomId);
 
     long countByRoomIdAndIsBrokenTrue(Long roomId);
+
+    List<Asset> findByResidualValueLessThan(Double threshold);
+
+    List<Asset> findByExpireDateBefore(LocalDate localDate);
 }

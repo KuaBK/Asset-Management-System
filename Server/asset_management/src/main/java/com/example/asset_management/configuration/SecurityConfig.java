@@ -24,7 +24,7 @@ public class SecurityConfig {
 
             "/asset", "/asset/{id}", "asset/count/{buildingId}", "/asset/list/broken",  "/asset/list",
 
-            "/report/export-excel", "/report/download", "/report/send",
+            "/report/export-excel", "/report/download", "/report/send", "/report/check",
 
             "/buildings/assets-summary", "/buildings/total/infor", "/buildings/everyBuilding/infor",
 

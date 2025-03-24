@@ -1,6 +1,5 @@
 package com.example.asset_management.report;
 
-import com.example.asset_management.entity.asset.Asset;
 import com.example.asset_management.entity.asset.AssetType;
 import com.example.asset_management.repository.AssetRepository;
 import com.example.asset_management.service.AssetService;
@@ -14,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 import java.io.File;
 import java.nio.file.Files;
 import java.time.Year;
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -25,6 +23,7 @@ public class ReportController {
     private final ReportService reportService;
     private final AssetService assetService;
     private final EmailService emailService;
+    private final CheckService checkService;
 
     @GetMapping("/export-excel")
     public ResponseEntity<?> exportExcel(
@@ -41,32 +40,33 @@ public class ReportController {
         }
     }
 
-
     @GetMapping("/download")
-    public ResponseEntity<byte[]> downloadReport() {
+    public ResponseEntity<byte[]> downloadReport(@RequestParam Long buildingId,
+                                                 @RequestParam Long roomId,
+                                                 @RequestParam AssetType assetType) {
         try {
-            List<Asset> tables = assetRepository.findAll();
 
-            File reportFile = emailService.generateExcelReport(tables);
+            File reportFile = emailService.generateExcelReport(buildingId, roomId, assetType);
+
             byte[] fileBytes = Files.readAllBytes(reportFile.toPath());
-
-            reportFile.delete();
 
             return ResponseEntity.ok()
                     .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=annual_report.xlsx")
                     .contentType(MediaType.APPLICATION_OCTET_STREAM)
                     .body(fileBytes);
         } catch (Exception e) {
-            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
     @PostMapping("/send")
-    public ResponseEntity<String> sendReport(@RequestParam String email) {
+    public ResponseEntity<String> sendReport(@RequestParam Long buildingId,
+                                             @RequestParam Long roomId,
+                                             @RequestParam AssetType assetType,
+                                             @RequestParam String email)
+    {
         try {
-            List<Asset> tables = assetRepository.findAll();
-            File reportFile = emailService.generateExcelReport(tables);
+            File reportFile = emailService.generateExcelReport(buildingId, roomId, assetType);
 
             int currentYear = Year.now().getValue();
 
@@ -74,9 +74,15 @@ public class ReportController {
             String body = "Báo cáo khấu hao tài sản năm" + currentYear;
 
             emailService.sendReport(email, subject, body, reportFile);
-            return ResponseEntity.ok("Báo cáo đã được gửi về email: " + email);
+            return ResponseEntity.ok("Send successfully: " + email);
         } catch (Exception e) {
-            return ResponseEntity.status(500).body("Lỗi khi gửi email: " + e.getMessage());
+            return ResponseEntity.status(500).body("Error when send to: " + e.getMessage());
         }
+    }
+
+    @GetMapping("/check")
+    public ResponseEntity<String> checkDepreciation() {
+        checkService.checkAssets();
+        return ResponseEntity.ok("Depreciation check completed, notifications sent if needed.");
     }
 }

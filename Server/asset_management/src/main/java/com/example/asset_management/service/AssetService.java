@@ -63,17 +63,11 @@ public class AssetService {
             throw new IllegalArgumentException("Room does not belong to the given building.");
         }
 
-        LocalDate expireDate = LocalDate.of(dto.getDateInSystem().getYear() + dto.getEstimatedLife(), 1, 1);
-
-        int currentYear = java.time.Year.now().getValue();
-        int systemYear = dto.getDateInSystem().getYear();
-        double depreciation = (currentYear - systemYear) * dto.getDepreciationValue();
-        double residualValue = Math.max(0, dto.getOriginalValue() - depreciation);
 
         return assetRepository.findById(id).map(existingAsset -> {
             existingAsset.setBuilding(building);
             existingAsset.setRoom(room);
-            existingAsset.getAssetType();
+            existingAsset.setAssetType(dto.getAssetType());
             existingAsset.setSeries(dto.getSeries());
             existingAsset.setIsBroken(dto.getIsBroken());
             existingAsset.setBrand(dto.getBrand());
@@ -81,12 +75,21 @@ public class AssetService {
             existingAsset.setType(dto.getType());
             existingAsset.setMaterial(dto.getMaterial());
             existingAsset.setProductYear(dto.getProductYear());
+
             existingAsset.setDateInSystem(dto.getDateInSystem());
             existingAsset.setEstimatedLife(dto.getEstimatedLife());
-            existingAsset.setOriginalValue(dto.getOriginalValue());
-            existingAsset.setDepreciationValue(dto.getDepreciationValue());
+            LocalDate expireDate = LocalDate.of(dto.getDateInSystem().getYear() + dto.getEstimatedLife(), 1, 1);
             existingAsset.setExpireDate(expireDate);
-            existingAsset.setResidualValue(residualValue);
+
+            existingAsset.setOriginalValue(dto.getOriginalValue());
+            existingAsset.setDepreciationRate(dto.getDepreciationRate());
+
+            LocalDate currentDate = LocalDate.now();
+            int yearsUsed = currentDate.getYear() - existingAsset.getDateInSystem().getYear();
+            double newResidualValue = existingAsset.getOriginalValue() *
+                    Math.pow((1 - existingAsset.getDepreciationRate()), yearsUsed);
+            newResidualValue = Math.max(newResidualValue, 0);
+            existingAsset.setResidualValue(newResidualValue);
 
             assetRepository.save(existingAsset);
             return mapToDTO(existingAsset);
@@ -100,6 +103,21 @@ public class AssetService {
             return true;
         }
         return false;
+    }
+
+    public void updateResidualValues() {
+        List<Asset> assets = assetRepository.findAll();
+        LocalDate currentDate = LocalDate.now();
+
+        for (Asset asset : assets) {
+            int yearsUsed = currentDate.getYear() - asset.getDateInSystem().getYear();
+            double newResidualValue = asset.getOriginalValue() *
+                    Math.pow((1 - asset.getDepreciationRate()), yearsUsed);
+            newResidualValue = Math.max(newResidualValue, 0);
+
+            asset.setResidualValue(newResidualValue);
+        }
+        assetRepository.saveAll(assets);
     }
 
     private AssetResponse mapToDTO(Asset asset) {
@@ -120,7 +138,7 @@ public class AssetService {
                 .residualValue(asset.getResidualValue())
                 .estimatedLife(asset.getEstimatedLife())
                 .originalValue(asset.getOriginalValue())
-                .depreciationValue(asset.getDepreciationValue())
+                .depreciationRate(asset.getDepreciationRate())
                 .build();
     }
 
@@ -133,10 +151,11 @@ public class AssetService {
 
         LocalDate expireDate = LocalDate.of(dto.getDateInSystem().getYear() + dto.getEstimatedLife(), 1, 1);
 
-        int currentYear = java.time.Year.now().getValue();
-        int systemYear = dto.getDateInSystem().getYear();
-        double depreciation = (currentYear - systemYear) * dto.getDepreciationValue();
-        double residualValue = Math.max(0, dto.getOriginalValue() - depreciation);
+        LocalDate currentDate = LocalDate.now();
+        int yearsUsed = currentDate.getYear() - dto.getDateInSystem().getYear();
+        double newResidualValue = dto.getOriginalValue() *
+                Math.pow((1 - dto.getDepreciationRate()), yearsUsed);
+        newResidualValue = Math.max(newResidualValue, 0);
 
         return Asset.builder()
                 .assetType(dto.getAssetType())
@@ -153,8 +172,8 @@ public class AssetService {
                 .expireDate(expireDate)
                 .estimatedLife(dto.getEstimatedLife())
                 .originalValue(dto.getOriginalValue())
-                .residualValue(residualValue)
-                .depreciationValue(dto.getDepreciationValue())
+                .residualValue(newResidualValue)
+                .depreciationRate(dto.getDepreciationRate())
                 .build();
     }
 }
