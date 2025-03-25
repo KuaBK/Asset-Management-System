@@ -1,4 +1,25 @@
+import { useState } from "react";
+import ItemList from "../modal/ItemList";
+import ItemFaultyList from "../modal/ItemFaultyList";
+import InputFaulty from "../modal/InputFaulty";
+
 const BuildingDetail = () => {
+  const [isItemListOpen, setIsItemListOpen] = useState(false);
+  const [isFaultyListOpen, setIsFaultyListOpen] = useState(false);
+  const [isFaultyInputOpen, setIsFaultyInputOpen] = useState(false);
+  const [faultyItems, setFaultyItems] = useState([]);
+
+  const addFaultyItem = (code) => {
+    // Add only if code is not already in the list
+    if (code && !faultyItems.includes(code)) {
+      setFaultyItems([...faultyItems, code]);
+    }
+  };
+
+  const removeFaultyItem = (code) => {
+    setFaultyItems(faultyItems.filter((item) => item !== code));
+  };
+
   return (
     <>
       <div className="flex flex-col min-h-screen space-y-5">
@@ -12,7 +33,7 @@ const BuildingDetail = () => {
             <div>Số lượng phòng hiện tại: 3</div>
             <button
               className="mt-2 px-4 py-2 bg-orange-500 hover:bg-orange-800 text-white rounded transition-colors duration-200"
-              onClick={() => console.log("Button clicked")}
+              onClick={() => setIsFaultyInputOpen(true)}
             >
               Thông báo thiết bị hư
             </button>
@@ -24,37 +45,39 @@ const BuildingDetail = () => {
           <div className="grid grid-cols-3 gap-24 p-4">
             <div className="h-30 border-2 rounded-2xl p-5 flex-col items-center justify-center text-center space-y-2">
               <div className="text-2xl font-medium">Phòng 601</div>
-              <div className="text-sm text-gray-500 font-extralight">
+              <div
+                className="text-sm text-gray-500 font-extralight"
+                onClick={() => setIsItemListOpen(true)}
+              >
                 Danh sách thiết bị
               </div>
-              <div className="text-sm text-red-500 font-extralight">
+              <div
+                className="text-sm text-red-500 font-extralight"
+                onClick={() => setIsFaultyListOpen(true)}
+              >
                 5 thiết bị đang gặp vấn đề
               </div>
             </div>
-            <div className="h-30 border-2 p-5 rounded-2xl flex-col items-center justify-center text-center space-y-2">
-              <div className="text-2xl font-medium">Phòng 602</div>
-              <div className="text-sm text-gray-500 font-extralight">
-                Danh sách thiết bị
-              </div>
-              <div className="text-sm text-red-500 font-extralight">
-                5 thiết bị đang gặp vấn đề
-              </div>
-            </div>
-            <div className="h-30 border-2 p-5 rounded-2xl flex-col items-center justify-center text-center space-y-2">
-              <div className="text-2xl font-medium">Phòng 603</div>
-              <div className="text-sm text-gray-500 font-extralight">
-                Danh sách thiết bị
-              </div>
-              <div className="text-sm text-red-500 font-extralight">
-                5 thiết bị đang gặp vấn đề
-              </div>
-            </div>
-            {/* <div className="border-2 p-4 rounded">Box 4</div>
-            <div className="border-2 p-4 rounded">Box 5</div>
-            <div className="border-2 p-4 rounded">Box 6</div> */}
+            {/* Repeat similar blocks for other rooms as needed */}
           </div>
         </div>
       </div>
+
+      {/* Modals */}
+      {isItemListOpen && <ItemList onClose={() => setIsItemListOpen(false)} />}
+      {isFaultyListOpen && (
+        <ItemFaultyList
+          faultyItems={faultyItems}
+          onRemove={removeFaultyItem}
+          onClose={() => setIsFaultyListOpen(false)}
+        />
+      )}
+      {isFaultyInputOpen && (
+        <InputFaulty
+          onAddFaultyItem={addFaultyItem}
+          onClose={() => setIsFaultyInputOpen(false)}
+        />
+      )}
     </>
   );
 };
