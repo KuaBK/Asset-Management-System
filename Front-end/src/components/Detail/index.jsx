@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useParams } from "react-router-dom";
 import door from '../../assets/door.svg';
+import BuildingDetail from "../../pages/BuildingDetail";
 const res = {
     BKB1: { name: "Tòa nhà BKB1", totalAssets: 50, brokenAssets: 5 },
     BKB2: { name: "Tòa nhà BKB2", totalAssets: 60, brokenAssets: 6 },
@@ -44,8 +45,8 @@ const Detail = () =>{
 
     return (
         <>
-            <Room name="Phòng A101" normal={20} broken={5} total={25} />
-
+            {/* <Room name="Phòng A101" normal={20} broken={5} total={25} /> */}
+            <BuildingDetail />
         </>
     )
 }
