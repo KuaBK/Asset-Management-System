@@ -22,7 +22,7 @@ public class SecurityConfig {
 
             "/account/myInfo", "/account", "/account/{id}",
 
-            "/asset", "/asset/{id}", "asset/count/{buildingId}", "/asset/list/broken",  "/asset/list",
+            "/asset", "/asset/{id}", "asset/count/{buildingId}", "/asset/list/broken",  "/asset/list", "/asset/{id}/toggle-broken", "/asset/summary", "asset/detail/byAssetType",
 
             "/report/export-excel", "/report/download", "/report/send", "/report/check",
 

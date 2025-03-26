@@ -2,16 +2,20 @@ package com.example.asset_management.service;
 
 import com.example.asset_management.dto.request.asset.AssetRequest;
 import com.example.asset_management.dto.response.asset.AssetResponse;
+import com.example.asset_management.entity.asset.AssetLog;
 import com.example.asset_management.entity.building.Building;
 import com.example.asset_management.entity.asset.Asset;
 import com.example.asset_management.entity.room.Room;
+import com.example.asset_management.repository.AssetLogRepository;
 import com.example.asset_management.repository.BuildingRepository;
 import com.example.asset_management.repository.RoomRepository;
 import com.example.asset_management.repository.AssetRepository;
+import com.example.asset_management.utils.JwtUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -22,6 +26,8 @@ public class AssetService {
     private final AssetRepository assetRepository;
     private final BuildingRepository buildingRepository;
     private final RoomRepository roomRepository;
+    private final JwtUtils jwtUtils;
+    private final AssetLogRepository assetLogRepository;
 
     public List<AssetResponse> getAllAsset() {
         return assetRepository.findAll().stream()
@@ -49,6 +55,7 @@ public class AssetService {
         asset.setRoom(room);
 
         asset = assetRepository.save(asset);
+        saveLog("Create asset", asset.getSeries());
         return mapToDTO(asset);
     }
 
@@ -92,6 +99,7 @@ public class AssetService {
             existingAsset.setResidualValue(newResidualValue);
 
             assetRepository.save(existingAsset);
+            saveLog("Update asset", existingAsset.getSeries());
             return mapToDTO(existingAsset);
         });
     }
@@ -99,6 +107,9 @@ public class AssetService {
 
     public boolean deleteAsset (Long id) {
         if (assetRepository.existsById(id)) {
+            assetRepository.findById(id).ifPresent(asset -> {
+                saveLog("Delete asset", asset.getSeries());
+            });
             assetRepository.deleteById(id);
             return true;
         }
@@ -119,6 +130,13 @@ public class AssetService {
         }
         assetRepository.saveAll(assets);
     }
+
+    public double calculateCurrentValue(Asset asset, int year) {
+        int yearsUsed = year - asset.getDateInSystem().getYear();
+        double depreciationFactor = Math.pow((1 - asset.getDepreciationRate()), yearsUsed);
+        return Math.max(asset.getOriginalValue() * depreciationFactor, asset.getResidualValue());
+    }
+
 
     private AssetResponse mapToDTO(Asset asset) {
         return AssetResponse.builder()
@@ -175,6 +193,16 @@ public class AssetService {
                 .residualValue(newResidualValue)
                 .depreciationRate(dto.getDepreciationRate())
                 .build();
+    }
+
+    public void saveLog(String action, String series) {
+        AssetLog log = AssetLog.builder()
+                .action(action)
+                .assetSeries(series)
+                .username(jwtUtils.getCurrentUsername())
+                .timestamp(LocalDateTime.now())
+                .build();
+        assetLogRepository.save(log);
     }
 }
 

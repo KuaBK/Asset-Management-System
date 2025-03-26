@@ -2,20 +2,24 @@ package com.example.asset_management.controller;
 
 import com.example.asset_management.dto.request.asset.AssetRequest;
 import com.example.asset_management.dto.response.ApiResponse;
+import com.example.asset_management.dto.response.asset.AssetDetailByTypeResponse;
 import com.example.asset_management.dto.response.asset.AssetResponse;
+import com.example.asset_management.dto.response.asset.AssetTotalSummaryResponse;
 import com.example.asset_management.entity.asset.Asset;
+import com.example.asset_management.entity.asset.AssetLog;
 import com.example.asset_management.entity.asset.AssetType;
+import com.example.asset_management.repository.AssetLogRepository;
 import com.example.asset_management.repository.AssetRepository;
 import com.example.asset_management.repository.RoomRepository;
 import com.example.asset_management.service.AssetService;
+import com.example.asset_management.utils.JwtUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.time.LocalDateTime;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/asset")
@@ -24,6 +28,8 @@ public class AssetController {
     private final AssetService assetService;
     private final AssetRepository assetRepository;
     private final RoomRepository roomRepository;
+    private final AssetLogRepository assetLogRepository;
+    private final JwtUtils jwtUtils;
 
     @GetMapping
     public ResponseEntity<ApiResponse<List<AssetResponse>>> getAllAsset() {
@@ -119,8 +125,46 @@ public class AssetController {
                 .map(asset -> {
                     asset.setIsBroken(!asset.getIsBroken());
                     assetRepository.save(asset);
+                    assetService.saveLog("Toggle broken status", asset.getSeries());
                     return ResponseEntity.ok(asset);
                 })
                 .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/summary")
+    public ResponseEntity<ApiResponse<List<AssetTotalSummaryResponse>>> getAssetSummary(@RequestParam int year) {
+        List<AssetTotalSummaryResponse> summaryList = Arrays.stream(AssetType.values())
+                .filter(type -> type != AssetType.ALL)
+                .map(type -> {
+                    List<Asset> assets = assetRepository.findByAssetType(type);
+                    int totalCount = assets.size();
+                    double totalOriginalValue = assets.stream().mapToDouble(Asset::getOriginalValue).sum();
+                    double totalCurrentValue = assets.stream()
+                            .mapToDouble(asset -> assetService.calculateCurrentValue(asset, year))
+                            .sum();
+                    return new AssetTotalSummaryResponse(type, totalCount, totalOriginalValue, totalCurrentValue);
+                })
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(new ApiResponse<>(200, "Get Asset Summary successfully", summaryList));
+    }
+    @GetMapping("/detail/byAssetType")
+    public ResponseEntity<ApiResponse<List<AssetDetailByTypeResponse>>> getAssetDetails(@RequestParam AssetType assetType, @RequestParam int year) {
+        if (assetType == AssetType.ALL) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        List<AssetDetailByTypeResponse> details = assetRepository.findByAssetType(assetType).stream()
+                .map(asset -> new AssetDetailByTypeResponse(
+                        asset.getSeries(),
+                        asset.getBuilding().getName(),
+                        asset.getRoom().getRoomNumber(),
+                        asset.getOriginalValue(),
+                        assetService.calculateCurrentValue(asset, year),
+                        asset.getDepreciationRate() * 100,
+                        year - asset.getDateInSystem().getYear()
+                ))
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(new ApiResponse<>(200,"Get list Detail successfully",details));
     }
 }
