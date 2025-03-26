@@ -112,4 +112,15 @@ public class AssetController {
 
         return ResponseEntity.ok(response);
     }
+
+    @PatchMapping("/{id}/toggle-broken")
+    public ResponseEntity<Asset> toggleBrokenStatus(@PathVariable Long id) {
+        return assetRepository.findById(id)
+                .map(asset -> {
+                    asset.setIsBroken(!asset.getIsBroken());
+                    assetRepository.save(asset);
+                    return ResponseEntity.ok(asset);
+                })
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
 }
