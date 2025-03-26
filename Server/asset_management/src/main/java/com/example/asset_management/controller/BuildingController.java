@@ -85,9 +85,9 @@ public class BuildingController {
         int totalBuildings = buildings.size();
 
         Map<String, Object> response = new HashMap<>();
-        response.put("Total Buildings", totalBuildings);
-        response.put("Total Assets", totalAssets);
-        response.put("Normal Assets", normalAssets);
+        response.put("Total-Buildings", totalBuildings);
+        response.put("Total-Assets", totalAssets);
+        response.put("Normal-Assets", normalAssets);
 
         return ResponseEntity.ok(response);
     }
