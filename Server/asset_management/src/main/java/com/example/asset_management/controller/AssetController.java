@@ -95,8 +95,8 @@ public class AssetController {
         Long totalAssets = assetRepository.countAssetsByBuildingAndRoomAndType(buildingId, roomId, assetType);
 
         Map<String, Object> response = new HashMap<>();
-        response.put("List-Assets", assets);
-        response.put("Assets-Quantity", totalAssets);
+        response.put("ListAssets", assets);
+        response.put("AssetsQuantity", totalAssets);
 
         return ResponseEntity.ok(response);
     }
@@ -113,8 +113,8 @@ public class AssetController {
         Long totalBrokenAssets = assetRepository.countBrokenAssetsByBuildingAndRoomAndType(buildingId, roomId, assetType);
 
         Map<String, Object> response = new HashMap<>();
-        response.put("List-Broken-Assets", brokenAssets);
-        response.put("Total-Broken-Assets", totalBrokenAssets);
+        response.put("ListBrokenAssets", brokenAssets);
+        response.put("TotalBrokenAssets", totalBrokenAssets);
 
         return ResponseEntity.ok(response);
     }
