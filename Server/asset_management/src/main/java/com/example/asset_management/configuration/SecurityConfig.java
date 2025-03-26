@@ -28,7 +28,9 @@ public class SecurityConfig {
 
             "/buildings/assets-summary", "/buildings/total/infor", "/buildings/everyBuilding/infor",
 
-            "/room/infor/{buildingId}"
+            "/room/infor/{buildingId}",
+
+            "/asset-log"
     };
 
     private final CustomJwtDecoder customJwtDecoder;

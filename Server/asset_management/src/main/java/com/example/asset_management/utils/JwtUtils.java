@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Component;
 
 import com.nimbusds.jose.*;
@@ -49,13 +50,24 @@ public class JwtUtils {
     }
 
     public String getCurrentUsername() {
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return "UNKNOWN";
+        }
+
+        Object principal = authentication.getPrincipal();
+
         if (principal instanceof UserDetails) {
             return ((UserDetails) principal).getUsername();
+        } else if (principal instanceof Jwt) {
+            Jwt jwt = (Jwt) principal;
+            return jwt.getClaimAsString("sub");
         } else {
             return principal.toString();
         }
     }
+
 
     public String loggedInUserId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
