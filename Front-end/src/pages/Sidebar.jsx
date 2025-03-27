@@ -1,10 +1,13 @@
 import { NavLink } from "react-router-dom";
-import { FaHome, FaSitemap, FaRegUser } from "react-icons/fa";
+import { FaHome, FaSitemap, FaRegUser, FaBuilding, FaTools, FaCalculator } from "react-icons/fa";
 import { PiNotePencilDuotone } from "react-icons/pi";
 import { GrMoney } from "react-icons/gr";
 import { BiLogOut } from "react-icons/bi";
 import { useState } from "react";
-import buildicon from '../assets/buildicon.svg';
+import buildicon_white from '../assets/buildicon-white.svg';
+import buildicon_blue from '../assets/buildicon-blue.svg'
+import fix_white from '../assets/fix-white.svg';
+import fix_blue from '../assets/fix-blue.svg'
 
 const Sidebar = ({ expanded, toggleSidebar }) => {
   const [isLogoHidden, setIsLogoHidden] = useState(false);
@@ -53,7 +56,7 @@ const Sidebar = ({ expanded, toggleSidebar }) => {
             }`
           }
         >
-          <FaHome />
+          <FaBuilding />
           {expanded && <span className="ml-2">BK.H1</span>}
         </NavLink>
         <NavLink
@@ -63,7 +66,7 @@ const Sidebar = ({ expanded, toggleSidebar }) => {
             }`
           }
         >
-          <FaHome />
+          <FaBuilding />
           {expanded && <span className="ml-2">BK.H2</span>}
         </NavLink>
         <NavLink
@@ -73,7 +76,7 @@ const Sidebar = ({ expanded, toggleSidebar }) => {
             }`
           }
         >
-          <FaHome />
+          <FaBuilding />
           {expanded && <span className="ml-2">BK.H3</span>}
         </NavLink>
         <NavLink
@@ -83,19 +86,29 @@ const Sidebar = ({ expanded, toggleSidebar }) => {
             }`
           }
         >
-          <FaHome />
+          <FaBuilding />
           {expanded && <span className="ml-2">BK.H6</span>}
         </NavLink>
 
         <NavLink
           to="detail/calculation" end
           className={({ isActive }) =>
-            `flex items-center justify-start mx-[20px] text-[25px] p-2 hover:bg-[#ffffff]  hover:text-[rgb(0,185,219)] transition-colors my-[20px] rounded-[30px] h-[50px] ${isActive ? "bg-[#ffffff] text-[rgb(0,185,219)]" : ""
+            `flex items-center justify-start mx-[20px] text-[25px] p-2 hover:bg-[#ffffff]  hover:text-[#0388B4] transition-colors my-[20px] rounded-[30px] h-[50px] ${isActive ? "bg-[#ffffff] text-[rgb(0,185,219)]" : ""
             }`
           }
         >
-          <FaHome />
+          <FaCalculator />
           {expanded && <span className="ml-2">Depreciation</span>}
+        </NavLink>
+        <NavLink
+          to="history" end
+          className={({ isActive }) =>
+            `flex items-center justify-start mx-[20px] text-[25px] p-2 hover:bg-[#ffffff]  hover:text-[#0388B4] transition-colors my-[20px] rounded-[30px] h-[50px] ${isActive ? "bg-[#ffffff] text-[rgb(0,185,219)]" : ""
+            }`
+          }
+        >
+          <FaTools />
+          {expanded && <span className="ml-2">Repair Log</span>}
         </NavLink>
 
 

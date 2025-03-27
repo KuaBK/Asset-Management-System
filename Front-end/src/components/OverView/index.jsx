@@ -240,7 +240,7 @@ const Card = ({ name, totalQuan, totalRoom, brokenQuan, tableTotal, tableBroken,
                         </div>
                     </div>
                     <div className=''>
-                        <p className='text-start ml-[10%]'>Table</p>
+                        <p className='text-start ml-[10%]'>Student Desk</p>
                         <div className="flex justify-center w-[80%] m-auto ">
                             <CustomProgressBar
                                 className='w-[90%]'
@@ -252,7 +252,7 @@ const Card = ({ name, totalQuan, totalRoom, brokenQuan, tableTotal, tableBroken,
                         </div>
                     </div>
                     <div className=''>
-                        <p className='text-start ml-[10%]'>Chair</p>
+                        <p className='text-start ml-[10%]'>Teacher Chair</p>
                         <div className="flex justify-center w-[80%] m-auto ">
                             <CustomProgressBar
                                 className='w-[90%]'
@@ -324,7 +324,7 @@ const OverView = () => {
     //     setFlipped(!flipped); // Lật thẻ khi gọi hàm
     // };
 
-    const [listCard, setListCard] = useState(res.data);
+    const [listCard, setListCard] = useState([]);
     const [assetTotal, setAssetTotal] = useState({
         NormalAssets: 0,
         TotalBuildings: 0,
@@ -374,7 +374,7 @@ const OverView = () => {
     }, [])
     return (
         <div className='w-[100%] h-[100%] '>
-            <div className="flex justify-end gap-[50px] mr-[50px]">
+            <div className="flex justify-center gap-[50px] mr-[50px]">
                 <div className="h-[150px] w-[250px] rounded-[30px] bg-[#0388B4] py-[20px] px-[30px] flex flex-col justify-around" >
                     <div className="font-bold text-white text[20px] ">TOTAL ASSETS</div>
                     <div className="flex justify-around">
@@ -398,7 +398,7 @@ const OverView = () => {
                 </div>
             </div>
             <div className="flex flex-wrap justify-between mt-[50px] gap-[20px] mx-[50px]">
-                {listCard.map((card) => (
+                {listCard?.map((card) => (
                     <Card
                         key={card.id}
                         name={card.name}
