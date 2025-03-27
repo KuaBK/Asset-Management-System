@@ -32,14 +32,14 @@ const Sidebar = ({ expanded, toggleSidebar }) => {
         </div>
       </div>
       <div className="my-2 mt-8 border w-full border-gray-600"></div> */}
-      <div className="h-[100px] bg-[rgb(0,185,219)] "></div>
+      <div className="h-[100px] bg-[#0388B4] "></div>
 
       {/* Navigation Links */}
-      <div className="h-[100%] text-lg font-medium bg-[rgb(0,185,219)]">
+      <div className="h-[100%] text-lg font-medium bg-[#0388B4]">
         <NavLink
           to="overview" end
           className={({ isActive }) =>
-            `flex items-center justify-start mx-[20px] text-[25px] p-2 hover:bg-[#ffffff]  hover:text-[rgb(0,185,219)] transition-colors my-[20px] rounded-[30px] h-[50px] ${isActive ? "bg-[#ffffff] text-[rgb(0,185,219)]" : ""
+            `flex items-center justify-start mx-[20px] text-[25px] p-2 hover:bg-[#ffffff]  hover:text-[#0388B4] transition-colors my-[20px] rounded-[30px] h-[50px] min-h-fit ${isActive ? "bg-[#ffffff] text-[#0388B4]" : ""
             }`
           }
         >
@@ -49,7 +49,7 @@ const Sidebar = ({ expanded, toggleSidebar }) => {
         <NavLink
           to="detail/h1" end
           className={({ isActive }) =>
-            `flex items-center justify-start mx-[20px] text-[25px] p-2 hover:bg-[#ffffff]  hover:text-[rgb(0,185,219)] transition-colors my-[20px] rounded-[30px] h-[50px] ${isActive ? "bg-[#ffffff] text-[rgb(0,185,219)]" : ""
+            `flex items-center justify-start mx-[20px] text-[25px] p-2 hover:bg-[#ffffff]  hover:text-[#0388B4] transition-colors my-[20px] rounded-[30px] h-[50px] ${isActive ? "bg-[#ffffff] text-[#0388B4]" : ""
             }`
           }
         >
@@ -59,7 +59,7 @@ const Sidebar = ({ expanded, toggleSidebar }) => {
         <NavLink
           to="detail/h2" end
           className={({ isActive }) =>
-            `flex items-center justify-start mx-[20px] text-[25px] p-2 hover:bg-[#ffffff]  hover:text-[rgb(0,185,219)] transition-colors my-[20px] rounded-[30px] h-[50px] ${isActive ? "bg-[#ffffff] text-[rgb(0,185,219)]" : ""
+            `flex items-center justify-start mx-[20px] text-[25px] p-2 hover:bg-[#ffffff]  hover:text-[#0388B4] transition-colors my-[20px] rounded-[30px] h-[50px] ${isActive ? "bg-[#ffffff] text-[#0388B4]" : ""
             }`
           }
         >
@@ -69,7 +69,7 @@ const Sidebar = ({ expanded, toggleSidebar }) => {
         <NavLink
           to="detail/h3" end
           className={({ isActive }) =>
-            `flex items-center justify-start mx-[20px] text-[25px] p-2 hover:bg-[#ffffff]  hover:text-[rgb(0,185,219)] transition-colors my-[20px] rounded-[30px] h-[50px] ${isActive ? "bg-[#ffffff] text-[rgb(0,185,219)]" : ""
+            `flex items-center justify-start mx-[20px] text-[25px] p-2 hover:bg-[#ffffff]  hover:text-[#0388B4] transition-colors my-[20px] rounded-[30px] h-[50px] ${isActive ? "bg-[#ffffff] text-[#0388B4]" : ""
             }`
           }
         >
@@ -79,7 +79,7 @@ const Sidebar = ({ expanded, toggleSidebar }) => {
         <NavLink
           to="detail/h6" end
           className={({ isActive }) =>
-            `flex items-center justify-start mx-[20px] text-[25px] p-2 hover:bg-[#ffffff]  hover:text-[rgb(0,185,219)] transition-colors my-[20px] rounded-[30px] h-[50px] ${isActive ? "bg-[#ffffff] text-[rgb(0,185,219)]" : ""
+            `flex items-center justify-start mx-[20px] text-[25px] p-2 hover:bg-[#ffffff]  hover:text-[#0388B4] transition-colors my-[20px] rounded-[30px] h-[50px] ${isActive ? "bg-[#ffffff] text-[#0388B4]" : ""
             }`
           }
         >

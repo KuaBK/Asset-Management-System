@@ -12,12 +12,12 @@ const Home = () => {
   };
 
   return (
-    <div className="h-screen flex flex-col">
+    <div className="h-screen max-h-screen max-w-full flex flex-col">
       <Header />
       {/* Sidebar */}
-      <div className="flex flex-1">
+      <div className="flex flex-1 h-[85vh]">
         <Sidebar expanded={isSidebarExpanded} toggleSidebar={toggleSidebar} />
-        <div className="p-5 flex-grow bg-white">
+        <div className="h-[100%] overflow-auto p-5 flex-grow bg-gray-100">
           <Outlet />
         </div>
       </div>
