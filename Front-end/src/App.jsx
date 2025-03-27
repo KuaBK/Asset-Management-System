@@ -5,6 +5,7 @@ import Login from "./components/Login";
 import Home from "./pages/Home";
 import OverView from "./components/OverView";
 import Detail from "./components/Detail";
+import DepreciationCal from "./components/DepreciationCal";
 
 
 function App() {
@@ -17,6 +18,7 @@ function App() {
           <Route index element={<Navigate to="/home/overview" replace />} />
           <Route path="overview" element={<OverView />} />
           <Route path="detail/:id" element={<Detail />} />
+          <Route path="detail/calculation" element={<DepreciationCal />} />
         </Route>
       </Routes>
     </Router>

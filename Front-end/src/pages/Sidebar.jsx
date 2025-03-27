@@ -87,6 +87,17 @@ const Sidebar = ({ expanded, toggleSidebar }) => {
           {expanded && <span className="ml-2">BK.H6</span>}
         </NavLink>
 
+        <NavLink
+          to="detail/calculation" end
+          className={({ isActive }) =>
+            `flex items-center justify-start mx-[20px] text-[25px] p-2 hover:bg-[#ffffff]  hover:text-[rgb(0,185,219)] transition-colors my-[20px] rounded-[30px] h-[50px] ${isActive ? "bg-[#ffffff] text-[rgb(0,185,219)]" : ""
+            }`
+          }
+        >
+          <FaHome />
+          {expanded && <span className="ml-2">Depreciation</span>}
+        </NavLink>
+
 
       </div>
     </div>
