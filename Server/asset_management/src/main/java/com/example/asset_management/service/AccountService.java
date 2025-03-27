@@ -2,7 +2,6 @@ package com.example.asset_management.service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import com.example.asset_management.dto.request.account.AccountCreationRequest;
 import com.example.asset_management.dto.request.account.AccountUpdateRequest;
@@ -38,7 +37,7 @@ public class AccountService {
 
     public List<AccountResponse> getAllAccounts() {
         List<Account> accounts = accountRepository.findAll();
-        return accounts.stream().map(this::mapToAccountResponse).collect(Collectors.toList());
+        return accounts.stream().map(this::mapToAccountResponse).toList();
     }
 
     public Optional<AccountResponse> getAccountById(String id) {

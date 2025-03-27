@@ -6,30 +6,19 @@ import com.example.asset_management.dto.response.asset.AssetDetailByTypeResponse
 import com.example.asset_management.dto.response.asset.AssetResponse;
 import com.example.asset_management.dto.response.asset.AssetTotalSummaryResponse;
 import com.example.asset_management.entity.asset.Asset;
-import com.example.asset_management.entity.asset.AssetLog;
 import com.example.asset_management.entity.asset.AssetType;
-import com.example.asset_management.repository.AssetLogRepository;
-import com.example.asset_management.repository.AssetRepository;
-import com.example.asset_management.repository.RoomRepository;
 import com.example.asset_management.service.AssetService;
-import com.example.asset_management.utils.JwtUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/asset")
 @RequiredArgsConstructor
 public class AssetController {
     private final AssetService assetService;
-    private final AssetRepository assetRepository;
-    private final RoomRepository roomRepository;
-    private final AssetLogRepository assetLogRepository;
-    private final JwtUtils jwtUtils;
 
     @GetMapping
     public ResponseEntity<ApiResponse<List<AssetResponse>>> getAllAsset() {
@@ -69,102 +58,42 @@ public class AssetController {
 
     @GetMapping("/count/{buildingId}")
     public ResponseEntity<Map<String, Long>> countAssetsByBuilding(@PathVariable Long buildingId) {
-        long totalAssets = assetRepository.countByBuildingId(buildingId);
-        long brokenAssets = assetRepository.countByBuildingIdAndIsBrokenTrue(buildingId);
-        long availableAssets = assetRepository.countByBuildingIdAndIsBrokenFalse(buildingId);
-
-        Map<String, Long> response = new HashMap<>();
-        response.put("Total", totalAssets);
-        response.put("Broken", brokenAssets);
-        response.put("Available", availableAssets);
-
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(assetService.countAssetsByBuilding(buildingId));
     }
 
     @GetMapping("/list")
-    public ResponseEntity<?> getTablesInRoom(@RequestParam Long buildingId,
+    public ResponseEntity<?> getAssetsInRoom(@RequestParam Long buildingId,
                                              @RequestParam Long roomId,
                                              @RequestParam AssetType assetType) {
-
-        if (!roomRepository.existsByIdAndBuildingId(roomId, buildingId)) {
-            return ResponseEntity.badRequest().body("Room ID " + roomId + " không thuộc Building ID " + buildingId);
-        }
-
-        List<Asset> assets = assetRepository.findByBuildingIdAndRoomIdAndAssetType(buildingId, roomId, assetType);
-
-        Long totalAssets = assetRepository.countAssetsByBuildingAndRoomAndType(buildingId, roomId, assetType);
-
-        Map<String, Object> response = new HashMap<>();
-        response.put("ListAssets", assets);
-        response.put("AssetsQuantity", totalAssets);
-
-        return ResponseEntity.ok(response);
+        Object result = assetService.getAssetsInRoom(buildingId, roomId, assetType);
+        return result instanceof String ? ResponseEntity.badRequest().body(result) : ResponseEntity.ok(result);
     }
 
     @GetMapping("/list/broken")
     public ResponseEntity<?> getBrokenAssetsByBuildingAndRoom(@RequestParam Long buildingId,
                                                               @RequestParam Long roomId,
                                                               @RequestParam AssetType assetType) {
-        if (!roomRepository.existsByIdAndBuildingId(roomId, buildingId)) {
-            return ResponseEntity.badRequest().body("Room ID " + roomId + " không thuộc Building ID " + buildingId);
-        }
-        List<Asset> brokenAssets = assetRepository.findByBuildingIdAndRoomIdAndAssetTypeAndIsBrokenTrue(buildingId, roomId, assetType);
-
-        Long totalBrokenAssets = assetRepository.countBrokenAssetsByBuildingAndRoomAndType(buildingId, roomId, assetType);
-
-        Map<String, Object> response = new HashMap<>();
-        response.put("ListBrokenAssets", brokenAssets);
-        response.put("TotalBrokenAssets", totalBrokenAssets);
-
-        return ResponseEntity.ok(response);
+        Object result = assetService.getBrokenAssetsByBuildingAndRoom(buildingId, roomId, assetType);
+        return result instanceof String ? ResponseEntity.badRequest().body(result) : ResponseEntity.ok(result);
     }
 
     @PatchMapping("/{id}/toggle-broken")
     public ResponseEntity<Asset> toggleBrokenStatus(@PathVariable Long id) {
-        return assetRepository.findById(id)
-                .map(asset -> {
-                    asset.setIsBroken(!asset.getIsBroken());
-                    assetRepository.save(asset);
-                    assetService.saveLog("Toggle broken status", asset.getSeries());
-                    return ResponseEntity.ok(asset);
-                })
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        Asset asset = assetService.toggleBrokenStatus(id);
+        return asset != null ? ResponseEntity.ok(asset) : ResponseEntity.notFound().build();
     }
 
     @GetMapping("/summary")
     public ResponseEntity<ApiResponse<List<AssetTotalSummaryResponse>>> getAssetSummary(@RequestParam int year) {
-        List<AssetTotalSummaryResponse> summaryList = Arrays.stream(AssetType.values())
-                .filter(type -> type != AssetType.ALL)
-                .map(type -> {
-                    List<Asset> assets = assetRepository.findByAssetType(type);
-                    int totalCount = assets.size();
-                    double totalOriginalValue = assets.stream().mapToDouble(Asset::getOriginalValue).sum();
-                    double totalCurrentValue = assets.stream()
-                            .mapToDouble(asset -> assetService.calculateCurrentValue(asset, year))
-                            .sum();
-                    return new AssetTotalSummaryResponse(type, totalCount, totalOriginalValue, totalCurrentValue);
-                })
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(new ApiResponse<>(200, "Get Asset Summary successfully", summaryList));
+        return ResponseEntity.ok(new ApiResponse<>(200, "Get Asset Summary successfully", assetService.getAssetSummary(year)));
     }
+
     @GetMapping("/detail/byAssetType")
     public ResponseEntity<ApiResponse<List<AssetDetailByTypeResponse>>> getAssetDetails(@RequestParam AssetType assetType, @RequestParam int year) {
-        if (assetType == AssetType.ALL) {
+        List<AssetDetailByTypeResponse> details = assetService.getAssetDetails(assetType, year);
+        if (details.isEmpty()) {
             return ResponseEntity.badRequest().build();
         }
-
-        List<AssetDetailByTypeResponse> details = assetRepository.findByAssetType(assetType).stream()
-                .map(asset -> new AssetDetailByTypeResponse(
-                        asset.getSeries(),
-                        asset.getBuilding().getName(),
-                        asset.getRoom().getRoomNumber(),
-                        asset.getOriginalValue(),
-                        assetService.calculateCurrentValue(asset, year),
-                        asset.getDepreciationRate() * 100,
-                        year - asset.getDateInSystem().getYear()
-                ))
-                .collect(Collectors.toList());
-
-        return ResponseEntity.ok(new ApiResponse<>(200,"Get list Detail successfully",details));
+        return ResponseEntity.ok(new ApiResponse<>(200, "Get list Detail successfully", details));
     }
 }

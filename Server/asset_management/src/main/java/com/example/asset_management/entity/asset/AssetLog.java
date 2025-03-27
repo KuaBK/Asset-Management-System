@@ -21,6 +21,10 @@ public class AssetLog {
     @Column(nullable = false)
     private String action;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private AssetType assetType;
+
     @Column(nullable = false)
     private String assetSeries;
 
