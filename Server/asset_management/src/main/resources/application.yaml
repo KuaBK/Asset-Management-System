@@ -26,7 +26,8 @@ spring:
             enable: true
             required: true
           ssl:
-            trust: smtp.gmail.com
+            checkserveridentity: false
+            trust: "*"
 
 springdoc:
   api-docs:
