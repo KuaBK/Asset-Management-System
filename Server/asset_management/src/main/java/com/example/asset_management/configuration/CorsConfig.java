@@ -13,7 +13,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 @Configuration
 @EnableWebMvc
-public class CorsConfig  {
+public class CorsConfig {
 
     @Bean
     public FilterRegistrationBean<CorsFilter> corsFilter() {
@@ -21,7 +21,10 @@ public class CorsConfig  {
         CorsConfiguration config = new CorsConfiguration();
 
         // Chỉ định rõ các origin được phép
-        config.setAllowedOrigins(Arrays.asList("http://localhost:8080/api/chat.html", "http://localhost:8080/api", "http://localhost:5173")); // Thêm origin cụ thể thay vì "*"
+        config.setAllowedOrigins(Arrays.asList(
+                "http://localhost:8080/api/chat.html",
+                "http://localhost:8080/api",
+                "http://localhost:5173")); // Thêm origin cụ thể thay vì "*"
 
         // Các phương thức HTTP được phép
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
@@ -39,4 +42,3 @@ public class CorsConfig  {
         return bean;
     }
 }
-

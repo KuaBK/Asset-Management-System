@@ -1,13 +1,14 @@
 package com.example.asset_management.report;
 
-import com.example.asset_management.entity.asset.Asset;
-import com.example.asset_management.repository.AssetRepository;
-import com.example.asset_management.service.AssetService;
+import java.io.ByteArrayOutputStream;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import jakarta.activation.DataSource;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.mail.util.ByteArrayDataSource;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -15,10 +16,12 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.io.ByteArrayOutputStream;
-import java.time.LocalDate;
-import java.util.List;
-import java.util.stream.Collectors;
+import com.example.asset_management.entity.asset.Asset;
+import com.example.asset_management.repository.AssetRepository;
+import com.example.asset_management.service.AssetService;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -33,23 +36,38 @@ public class CheckService {
     private static final String HOST_EMAIL = "tuanphonglqd@gmail.com";
 
     public List<Asset> getLowValueAssets() {
-        return assetRepository.findAll()
-                .stream()
-                .filter(asset -> (asset.getResidualValue() <= asset.getOriginalValue() * DEPRECIATION_THRESHOLD) && (asset.getResidualValue() >= 1))
+        return assetRepository.findAll().stream()
+                .filter(asset -> (asset.getResidualValue() <= asset.getOriginalValue() * DEPRECIATION_THRESHOLD)
+                        && (asset.getResidualValue() >= 1))
                 .collect(Collectors.toList());
     }
 
-
     private byte[] generateExcelReport(List<Asset> assets, String sheetName) {
-        try (Workbook workbook = new XSSFWorkbook(); ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+        try (Workbook workbook = new XSSFWorkbook();
+                ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
             Sheet sheet = workbook.createSheet(sheetName);
 
             Row headerRow = sheet.createRow(0);
             String[] headers = {
-                    "AssetType", "Building", "Room", "",
-                    "Series", "isBroken", "Brand", "Model", "Type", "material", "Product Year", "",
-                    "Date In System", "Expire Date", "Estimated Life", "",
-                    "Original Value", "Depreciation Rate", "Residual Value"
+                "AssetType",
+                "Building",
+                "Room",
+                "",
+                "Series",
+                "isBroken",
+                "Brand",
+                "Model",
+                "Type",
+                "material",
+                "Product Year",
+                "",
+                "Date In System",
+                "Expire Date",
+                "Estimated Life",
+                "",
+                "Original Value",
+                "Depreciation Rate",
+                "Residual Value"
             };
             for (int i = 0; i < headers.length; i++) {
                 Cell cell = headerRow.createCell(i);
@@ -84,7 +102,7 @@ public class CheckService {
 
                 row.createCell(16).setCellValue(asset.getOriginalValue().intValue() + " USD");
                 row.createCell(17).setCellValue(asset.getDepreciationRate());
-                row.createCell(18).setCellValue(asset.getResidualValue().intValue()+ " USD");
+                row.createCell(18).setCellValue(asset.getResidualValue().intValue() + " USD");
             }
 
             workbook.write(outputStream);
@@ -111,7 +129,8 @@ public class CheckService {
             helper.setSubject(subject);
             helper.setText(text);
 
-            DataSource dataSource = new ByteArrayDataSource(attachment, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+            DataSource dataSource = new ByteArrayDataSource(
+                    attachment, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
             helper.addAttachment(fileName, dataSource);
 
             mailSender.send(message);
@@ -144,20 +163,31 @@ public class CheckService {
                 .toList();
 
         byte[] deterFile = generateExcelReport(deterioratingAssets, "Danh sách tài sản xuống cấp");
-        sendEmailWithAttachment(HOST_EMAIL, "Cảnh báo tài sản xuống cấp",
-                    "Đính kèm danh sách tài sản có giá trị còn lại dưới 30%.", deterFile, "deteriorating_Assets.xlsx");
-
+        sendEmailWithAttachment(
+                HOST_EMAIL,
+                "Cảnh báo tài sản xuống cấp",
+                "Đính kèm danh sách tài sản có giá trị còn lại dưới 30%.",
+                deterFile,
+                "deteriorating_Assets.xlsx");
 
         if (!sellableAssets.isEmpty()) {
             byte[] sellExcel = generateExcelReport(sellableAssets, "Danh sách tài sản thanh lý");
-            sendEmailWithAttachment(HOST_EMAIL, "Danh sách tài sản thanh lý",
-                    "Đính kèm danh sách tài sản có thể thanh lý.", sellExcel, "Sellable_Assets.xlsx");
+            sendEmailWithAttachment(
+                    HOST_EMAIL,
+                    "Danh sách tài sản thanh lý",
+                    "Đính kèm danh sách tài sản có thể thanh lý.",
+                    sellExcel,
+                    "Sellable_Assets.xlsx");
         }
 
         if (!discardAssets.isEmpty()) {
             byte[] discardExcel = generateExcelReport(discardAssets, "Danh sách tài sản vứt bỏ");
-            sendEmailWithAttachment(HOST_EMAIL, "Danh sách tài sản vứt bỏ",
-                    "Đính kèm danh sách tài sản cần vứt bỏ.", discardExcel, "Discard_Assets.xlsx");
+            sendEmailWithAttachment(
+                    HOST_EMAIL,
+                    "Danh sách tài sản vứt bỏ",
+                    "Đính kèm danh sách tài sản cần vứt bỏ.",
+                    discardExcel,
+                    "Discard_Assets.xlsx");
         }
     }
 }

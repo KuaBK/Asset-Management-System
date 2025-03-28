@@ -2,9 +2,6 @@ package com.example.asset_management.utils;
 
 import java.text.ParseException;
 
-import com.example.asset_management.entity.account.Account;
-import com.example.asset_management.repository.AccountRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -12,6 +9,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Component;
 
+import com.example.asset_management.entity.account.Account;
+import com.example.asset_management.repository.AccountRepository;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
@@ -68,10 +67,11 @@ public class JwtUtils {
         }
     }
 
-
     public String loggedInUserId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Account user = accountRepository.findByUsername(authentication.getName()).orElseThrow(() -> new RuntimeException("User Not Found"));
+        Account user = accountRepository
+                .findByUsername(authentication.getName())
+                .orElseThrow(() -> new RuntimeException("User Not Found"));
         return user.getUsername();
     }
 }

@@ -18,24 +18,25 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
     private static final String[] PUBLIC_ENDPOINTS = {
-            "/auth/login", "/auth/introspect", "/auth/logout", "/auth/refresh",
-//
-//            "/account/myInfo", "/account", "/account/{id}",
-//
-//            "/asset", "/asset/{id}", "asset/count/{buildingId}", "/asset/list/broken",  "/asset/list", "/asset/{id}/toggle-broken", "/asset/summary", "asset/detail/byAssetType",
-//
-//            "/report/export-excel", "/report/download", "/report/send", "/report/check",
-//
-//            "/buildings/assets-summary", "/buildings/total/infor", "/buildings/everyBuilding/infor",
-//
-//            "/room/infor/{buildingId}",
-//
-//            "/asset-log"
+        "/auth/login", "/auth/introspect", "/auth/logout", "/auth/refresh",
+        //
+        //            "/account/myInfo", "/account", "/account/{id}",
+        //
+        //            "/asset", "/asset/{id}", "asset/count/{buildingId}", "/asset/list/broken",  "/asset/list",
+        // "/asset/{id}/toggle-broken", "/asset/summary", "asset/detail/byAssetType",
+        //
+        //            "/report/export-excel", "/report/download", "/report/send", "/report/check",
+        //
+        //            "/buildings/assets-summary", "/buildings/total/infor", "/buildings/everyBuilding/infor",
+        //
+        //            "/room/infor/{buildingId}",
+        //
+        //            "/asset-log"
     };
 
     private final CustomJwtDecoder customJwtDecoder;
 
-    //@Autowired
+    // @Autowired
     public SecurityConfig(CustomJwtDecoder customJwtDecoder) {
         this.customJwtDecoder = customJwtDecoder;
     }
