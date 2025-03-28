@@ -4,6 +4,7 @@ import com.example.asset_management.dto.request.asset.AssetRequest;
 import com.example.asset_management.dto.response.asset.AssetDetailByTypeResponse;
 import com.example.asset_management.dto.response.asset.AssetResponse;
 import com.example.asset_management.dto.response.asset.AssetTotalSummaryResponse;
+import com.example.asset_management.entity.asset.AssetLogType;
 import com.example.asset_management.entity.asset.AssetType;
 import com.example.asset_management.entity.building.Building;
 import com.example.asset_management.entity.asset.Asset;
@@ -49,7 +50,7 @@ public class AssetService {
         asset.setRoom(room);
 
         asset = assetRepository.save(asset);
-        assetLogService.saveLog("Create asset", asset.getAssetType(), asset.getSeries());
+        assetLogService.saveLog("Create asset", asset.getAssetType(), asset.getSeries(), AssetLogType.CREATE);
         return mapToDTO(asset);
     }
 
@@ -93,7 +94,7 @@ public class AssetService {
             existingAsset.setResidualValue(newResidualValue);
 
             assetRepository.save(existingAsset);
-            assetLogService.saveLog("Update asset", existingAsset.getAssetType(), existingAsset.getSeries());
+            assetLogService.saveLog("Update asset", existingAsset.getAssetType(), existingAsset.getSeries(), AssetLogType.UPDATE);
             return mapToDTO(existingAsset);
         });
     }
@@ -102,7 +103,7 @@ public class AssetService {
     public boolean deleteAsset (Long id) {
         if (assetRepository.existsById(id)) {
             assetRepository.findById(id).ifPresent(asset ->
-                    assetLogService.saveLog("Delete asset", asset.getAssetType(), asset.getSeries())
+                    assetLogService.saveLog("Delete asset", asset.getAssetType(), asset.getSeries(), AssetLogType.DELETE)
             );
             assetRepository.deleteById(id);
             return true;
@@ -202,7 +203,7 @@ public class AssetService {
                 .map(asset -> {
                     asset.setIsBroken(!asset.getIsBroken());
                     assetRepository.save(asset);
-                    assetLogService.saveLog("Toggle broken status", asset.getAssetType(), asset.getSeries());
+                    assetLogService.saveLog("Toggle broken status asset", asset.getAssetType(), asset.getSeries(), AssetLogType.TOGGLE);
                     return asset;
                 })
                 .orElse(null);
