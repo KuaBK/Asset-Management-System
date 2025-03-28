@@ -25,9 +25,6 @@ spring:
           starttls:
             enable: true
             required: true
-          ssl:
-            checkserveridentity: false
-            trust: "*"
 
 springdoc:
   api-docs:

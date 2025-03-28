@@ -108,7 +108,7 @@ public class AccountController {
     @PostMapping("/forgot-password")
     public ResponseEntity<ApiResponse<String>> sendResetCode(@RequestParam String email) {
         if(accountRepository.findByEmail(email).isEmpty()){
-            return ResponseEntity.ok(new ApiResponse<>(400, "Email không hợp lệ", null));
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
         String message = accountService.sendResetCode(email);
         return ResponseEntity.ok(new ApiResponse<>(200, message, null));
