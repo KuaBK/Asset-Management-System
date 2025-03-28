@@ -10,4 +10,6 @@ import com.example.asset_management.entity.account.Account;
 @Repository
 public interface AccountRepository extends JpaRepository<Account, String> {
     Optional<Account> findByUsername(String username);
+
+    Optional<Account> findByEmail(String email);
 }

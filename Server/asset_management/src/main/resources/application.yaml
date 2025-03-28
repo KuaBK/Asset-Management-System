@@ -33,8 +33,8 @@ springdoc:
 
 jwt:
   signerKey: "1TjXchw5FloESb63Kc+DFhTARvpWL4jUGCwfGWxuG5SIf/1y/LgJxHnMqaF6A/ij"
-  valid-duration: 3600 #seconds
-  refreshable-duration: 36000 #seconds
+  valid-duration: 36000 #seconds
+  refreshable-duration: 360000 #seconds
 
 cloudinary:
   cloud_name: "dkamugos5"

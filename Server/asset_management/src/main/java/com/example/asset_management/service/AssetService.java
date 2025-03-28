@@ -1,7 +1,6 @@
 package com.example.asset_management.service;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.*;
 
 import org.springframework.stereotype.Service;
@@ -10,27 +9,19 @@ import com.example.asset_management.dto.request.asset.AssetRequest;
 import com.example.asset_management.dto.response.asset.AssetDetailByTypeResponse;
 import com.example.asset_management.dto.response.asset.AssetResponse;
 import com.example.asset_management.dto.response.asset.AssetTotalSummaryResponse;
-import com.example.asset_management.entity.asset.Asset;
-import com.example.asset_management.entity.asset.AssetLog;
+import com.example.asset_management.entity.asset.AssetLogType;
 import com.example.asset_management.entity.asset.AssetType;
 import com.example.asset_management.entity.building.Building;
 import com.example.asset_management.entity.room.Room;
-import com.example.asset_management.repository.AssetLogRepository;
-import com.example.asset_management.repository.AssetRepository;
 import com.example.asset_management.repository.BuildingRepository;
 import com.example.asset_management.repository.RoomRepository;
-import com.example.asset_management.utils.JwtUtils;
-
-import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 public class AssetService {
-    private final AssetRepository assetRepository;
     private final BuildingRepository buildingRepository;
     private final RoomRepository roomRepository;
-    private final JwtUtils jwtUtils;
-    private final AssetLogRepository assetLogRepository;
+    private final AssetLogService assetLogService;
 
     public List<AssetResponse> getAllAsset() {
         return assetRepository.findAll().stream().map(this::mapToDTO).toList();
@@ -58,7 +49,7 @@ public class AssetService {
         asset.setRoom(room);
 
         asset = assetRepository.save(asset);
-        saveLog("Create asset", asset.getAssetType(), asset.getSeries());
+        assetLogService.saveLog("Create asset", asset.getAssetType(), asset.getSeries(), AssetLogType.CREATE);
         return mapToDTO(asset);
     }
 
@@ -104,7 +95,8 @@ public class AssetService {
             existingAsset.setResidualValue(newResidualValue);
 
             assetRepository.save(existingAsset);
-            saveLog("Update asset", existingAsset.getAssetType(), existingAsset.getSeries());
+            assetLogService.saveLog(
+                    "Update asset", existingAsset.getAssetType(), existingAsset.getSeries(), AssetLogType.UPDATE);
             return mapToDTO(existingAsset);
         });
     }
@@ -113,7 +105,8 @@ public class AssetService {
         if (assetRepository.existsById(id)) {
             assetRepository
                     .findById(id)
-                    .ifPresent(asset -> saveLog("Delete asset", asset.getAssetType(), asset.getSeries()));
+                    .ifPresent(asset -> assetLogService.saveLog(
+                            "Delete asset", asset.getAssetType(), asset.getSeries(), AssetLogType.DELETE));
             assetRepository.deleteById(id);
             return true;
         }
@@ -213,7 +206,8 @@ public class AssetService {
                 .map(asset -> {
                     asset.setIsBroken(!asset.getIsBroken());
                     assetRepository.save(asset);
-                    saveLog("Toggle broken status", asset.getAssetType(), asset.getSeries());
+                    assetLogService.saveLog(
+                            "Toggle broken status asset", asset.getAssetType(), asset.getSeries(), AssetLogType.TOGGLE);
                     return asset;
                 })
                 .orElse(null);
@@ -286,16 +280,5 @@ public class AssetService {
                 .residualValue(newResidualValue)
                 .depreciationRate(dto.getDepreciationRate())
                 .build();
-    }
-
-    public void saveLog(String action, AssetType assetType, String series) {
-        AssetLog log = AssetLog.builder()
-                .action(action)
-                .assetType(assetType)
-                .assetSeries(series)
-                .username(jwtUtils.getCurrentUsername())
-                .timestamp(LocalDateTime.now())
-                .build();
-        assetLogRepository.save(log);
     }
 }

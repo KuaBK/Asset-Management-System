@@ -1,9 +1,5 @@
 package com.example.asset_management.report;
 
-import java.io.File;
-import java.nio.file.Files;
-import java.time.Year;
-
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -11,8 +7,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.example.asset_management.entity.asset.AssetType;
-import com.example.asset_management.repository.AssetRepository;
-import com.example.asset_management.service.AssetService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -21,9 +15,7 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/report")
 public class ReportController {
 
-    private final AssetRepository assetRepository;
     private final ReportService reportService;
-    private final AssetService assetService;
     private final EmailService emailService;
     private final CheckService checkService;
 

@@ -20,25 +20,15 @@ public class CorsConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
 
-        // Chỉ định rõ các origin được phép
         config.setAllowedOrigins(Arrays.asList(
-                "http://localhost:8080/api/chat.html",
-                "http://localhost:8080/api",
-                "http://localhost:5173")); // Thêm origin cụ thể thay vì "*"
-
-        // Các phương thức HTTP được phép
+                "http://localhost:8080/api/chat.html", "http://localhost:8080/api", "http://localhost:5173"));
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
-
-        // Các header được phép
         config.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "X-Requested-With"));
-
-        // Cho phép credentials (cookie, authorization headers)
         config.setAllowCredentials(true);
-
         source.registerCorsConfiguration("/**", config);
 
         FilterRegistrationBean<CorsFilter> bean = new FilterRegistrationBean<>(new CorsFilter(source));
-        bean.setOrder(Ordered.HIGHEST_PRECEDENCE); // Đảm bảo CorsFilter chạy sớm nhất
+        bean.setOrder(Ordered.HIGHEST_PRECEDENCE);
         return bean;
     }
 }

@@ -30,9 +30,13 @@ public class AssetLog {
     private String assetSeries;
 
     @Column(nullable = false)
-    private String username;
+    private String email;
 
     @Column(nullable = false)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss")
     private LocalDateTime timestamp;
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private AssetLogType type;
 }

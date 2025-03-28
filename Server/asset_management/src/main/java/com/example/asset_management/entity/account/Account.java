@@ -1,6 +1,7 @@
 package com.example.asset_management.entity.account;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
@@ -32,6 +33,10 @@ public class Account {
     @NotNull(message = "Password cannot be null")
     @Size(min = 8, message = "Password must be at least 8 characters long")
     String password;
+
+    @Email
+    @Column(unique = true, nullable = false)
+    String email;
 
     @Enumerated(EnumType.STRING)
     Role role;

@@ -101,4 +101,21 @@ public class AccountController {
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
     }
+
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<ApiResponse<String>> sendResetCode(@RequestParam String email) {
+        String message = accountService.sendResetCode(email);
+        return ResponseEntity.ok(new ApiResponse<>(200, message, null));
+    }
+
+    @PostMapping("/confirm-otp")
+    public ResponseEntity<ApiResponse<String>> confirmOtp(@RequestParam String otp, @RequestParam String email) {
+        return ResponseEntity.ok(accountService.confirmOTP(otp, email));
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<String> resetPassword(@RequestParam String email, @RequestParam String newPassword, @RequestParam String confirmPassword) {
+        return ResponseEntity.ok(accountService.resetPassword(email, newPassword, confirmPassword));
+    }
 }

@@ -1,17 +1,26 @@
 package com.example.asset_management.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
+import jakarta.transaction.Transactional;
+
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.example.asset_management.dto.request.account.AccountCreationRequest;
 import com.example.asset_management.dto.request.account.AccountUpdateRequest;
+import com.example.asset_management.dto.response.ApiResponse;
 import com.example.asset_management.dto.response.account.AccountResponse;
 import com.example.asset_management.entity.account.Account;
+import com.example.asset_management.entity.account.PasswordResetToken;
 import com.example.asset_management.entity.account.Role;
 import com.example.asset_management.repository.AccountRepository;
+import com.example.asset_management.repository.PasswordResetTokenRepository;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +33,8 @@ public class AccountService {
 
     private final AccountRepository accountRepository;
     private final PasswordEncoder passwordEncoder;
+    private final PasswordResetTokenRepository tokenRepository;
+    private final JavaMailSender mailSender;
 
     public AccountResponse createAccount(AccountCreationRequest accountRequest) {
         Account account = Account.builder()
@@ -77,6 +88,66 @@ public class AccountService {
                 .username(account.getUsername())
                 .Role(account.getRole().name())
                 .build();
+    }
+
+    public String sendResetCode(String email) {
+        Optional<Account> accountOpt = accountRepository.findByEmail(email);
+        if (accountOpt.isEmpty()) {
+            return "Email không tồn tại!";
+        }
+
+        String otp = String.format("%06d", new Random().nextInt(999999));
+        LocalDateTime expiryTime = LocalDateTime.now().plusMinutes(10);
+
+        Optional<PasswordResetToken> existingTokenOpt = tokenRepository.findByEmail(email);
+
+        if (existingTokenOpt.isPresent()) {
+            PasswordResetToken existingToken = existingTokenOpt.get();
+            existingToken.setToken(otp);
+            existingToken.setExpiryDate(expiryTime);
+            tokenRepository.save(existingToken);
+        } else {
+            PasswordResetToken token = new PasswordResetToken(email, otp, expiryTime);
+            tokenRepository.save(token);
+        }
+
+        sendEmail(email, "Quên mật khẩu - Mã OTP", "Mã OTP của bạn là: " + otp);
+
+        return "Mã OTP đã được gửi tới email.";
+    }
+
+    public void sendEmail(String to, String subject, String text) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(to);
+        message.setSubject(subject);
+        message.setText(text);
+        mailSender.send(message);
+    }
+
+    public ApiResponse<String> confirmOTP(String otp, String email) {
+        Optional<PasswordResetToken> tokenOpt = tokenRepository.findByEmailAndToken(email, otp);
+        if (tokenOpt.isEmpty() || tokenOpt.get().getExpiryDate().isBefore(LocalDateTime.now())) {
+            return new ApiResponse<>(400, "OTP không hợp lệ hoặc đã hết hạn", null);
+        }
+        return new ApiResponse<>(200, "Mã OTP hợp lệ", null);
+    }
+
+    @Transactional
+    public String resetPassword(String email, String newPassword, String confirmPassword) {
+        Optional<Account> accountOpt = accountRepository.findByEmail(email);
+        if (accountOpt.isEmpty()) {
+            return "Email không tồn tại!";
+        }
+
+        Account account = accountOpt.get();
+        if (newPassword.equals(confirmPassword)) {
+            account.setPassword(passwordEncoder.encode(newPassword));
+            accountRepository.save(account);
+            tokenRepository.deleteByEmail(email);
+            return "Successful";
+        } else {
+            return "Password isn't match";
+        }
     }
 }
 // @PreAuthorize("hasRole('ADMIN')")

@@ -4,6 +4,8 @@ const DepreciationCal = () => {
   const [year, setYear] = useState(2025);
   const [assets, setAssets] = useState([]);
   const [selectedAsset, setSelectedAsset] = useState(null);
+  const [selectedAssetType, setSelectedAssetType] = useState("");
+
   const token = localStorage.getItem("TOKEN");
 
   useEffect(() => {
@@ -36,6 +38,7 @@ const DepreciationCal = () => {
 
   const fetchAssetDetail = async (assetType) => {
     try {
+      setSelectedAssetType(assetType);
       const response = await fetch(
         `http://localhost:8080/api/asset/detail/byAssetType?year=${year}&assetType=${assetType}`,
         {
@@ -59,20 +62,21 @@ const DepreciationCal = () => {
   };
 
   return (
-    <div className="py-4 px-6 lg:px-8 flex flex-col items-center">
-      <div className="mt-4 flex items-center justify-center space-x-4">
-        <h2 className="text-xl font-bold bg-blue-500 text-white py-2 px-6 rounded-lg">
-          DEPRECIATION TABLE
+    <div className="py-6 px-8 flex flex-col items-center bg-gray-50 min-h-screen">
+      <div className="w-full max-w-4xl flex justify-between items-center">
+        <h2 className="text-3xl font-extrabold text-blue-700 tracking-wide uppercase text-center flex-1">
+          Depreciation Table
         </h2>
         <select
-          className="bg-blue-500 text-white px-4 py-2 rounded-lg cursor-pointer"
+          className="bg-blue-600 text-white font-semibold px-5 py-2 rounded-lg cursor-pointer shadow-md hover:bg-blue-700 transition duration-300"
           value={year}
           onChange={(e) => setYear(e.target.value)}
         >
-          <option value="2022">2022</option>
-          <option value="2023">2023</option>
-          <option value="2024">2024</option>
-          <option value="2025">2025</option>
+          {[2022, 2023, 2024, 2025].map((y) => (
+            <option key={y} value={y}>
+              {y}
+            </option>
+          ))}
         </select>
       </div>
 
@@ -115,38 +119,52 @@ const DepreciationCal = () => {
       </div>
 
       {selectedAsset && (
-        <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 backdrop-blur-sm transition-opacity duration-300">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-3/4 max-w-4xl opacity-100 transition-opacity duration-300">
+        <div className="fixed inset-0 flex items-center justify-center z-50">
+          {/* Background làm mờ bằng backdrop-filter */}
+          <div className="absolute inset-0 backdrop-blur-md"></div>
+
+          {/* Modal */}
+          <div className="relative bg-white p-6 rounded-xl shadow-2xl border border-gray-300 w-3/4 max-w-4xl">
+            <button
+              className="absolute top-3 right-3 bg-red-500 text-white p-2 rounded-full hover:bg-red-600"
+              onClick={() => setSelectedAsset(null)}
+            >
+              ✖
+            </button>
             <h3 className="text-2xl font-bold text-blue-600 mb-4 text-center uppercase">
-              Asset Details
+              {selectedAssetType ? selectedAssetType : "Asset Details"}
             </h3>
-            <table className="min-w-full border-collapse border border-blue-400">
-              <thead className="bg-blue-200">
-                <tr>
-                  <th className="border border-blue-400 px-6 py-3 text-center">Series</th>
-                  <th className="border border-blue-400 px-6 py-3 text-center">Building</th>
-                  <th className="border border-blue-400 px-6 py-3 text-center">Room</th>
-                  <th className="border border-blue-400 px-6 py-3 text-center">Original Value (VNĐ)</th>
-                  <th className="border border-blue-400 px-6 py-3 text-center">Current Value (VNĐ)</th>
-                  <th className="border border-blue-400 px-6 py-3 text-center">Depreciation Rate (%)</th>
-                  <th className="border border-blue-400 px-6 py-3 text-center">Years Used</th>
-                </tr>
-              </thead>
-              <tbody>
-                {selectedAsset.map((item, index) => (
-                  <tr key={index} className="bg-white">
-                    <td className="border border-blue-400 px-6 py-3 text-center">{item.series}</td>
-                    <td className="border border-blue-400 px-6 py-3 text-center">{item.buildingName}</td>
-                    <td className="border border-blue-400 px-6 py-3 text-center">{item.roomNumber}</td>
-                    <td className="border border-blue-400 px-6 py-3 text-center">{item.originalValue.toFixed(2)}</td>
-                    <td className="border border-blue-400 px-6 py-3 text-center">{item.currentValue.toFixed(2)}</td>
-                    <td className="border border-blue-400 px-6 py-3 text-center">{item.depreciationRate}%</td>
-                    <td className="border border-blue-400 px-6 py-3 text-center">{item.yearsUsed}</td>
+            <div className="overflow-y-auto max-h-[60vh]">
+              <table className="w-full border-collapse border border-blue-400">
+                <thead className="bg-blue-200">
+                  <tr>
+                    <th className="border border-blue-400 px-4 py-2 text-center">Series</th>
+                    <th className="border border-blue-400 px-4 py-2 text-center">Building</th>
+                    <th className="border border-blue-400 px-4 py-2 text-center">Room</th>
+                    <th className="border border-blue-400 px-4 py-2 text-center">Original Value (VNĐ)</th>
+                    <th className="border border-blue-400 px-4 py-2 text-center">Current Value (VNĐ)</th>
+                    <th className="border border-blue-400 px-4 py-2 text-center">Depreciation Rate (%)</th>
+                    <th className="border border-blue-400 px-4 py-2 text-center">Years Used</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-            <button onClick={() => setSelectedAsset(null)} className="mt-6 w-full bg-red-500 text-white px-6 py-3 rounded-md hover:bg-red-600">
+                </thead>
+                <tbody>
+                  {selectedAsset.map((item, index) => (
+                    <tr key={index} className="bg-white">
+                      <td className="border border-blue-400 px-4 py-2 text-center">{item.series}</td>
+                      <td className="border border-blue-400 px-4 py-2 text-center">{item.buildingName}</td>
+                      <td className="border border-blue-400 px-4 py-2 text-center">{item.roomNumber}</td>
+                      <td className="border border-blue-400 px-4 py-2 text-center">{item.originalValue.toFixed(2)}</td>
+                      <td className="border border-blue-400 px-4 py-2 text-center">{item.currentValue.toFixed(2)}</td>
+                      <td className="border border-blue-400 px-4 py-2 text-center">{item.depreciationRate}%</td>
+                      <td className="border border-blue-400 px-4 py-2 text-center">{item.yearsUsed}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <button
+              onClick={() => setSelectedAsset(null)}
+              className="mt-6 w-full bg-red-500 text-white px-6 py-3 rounded-md hover:bg-red-600">
               Close
             </button>
           </div>

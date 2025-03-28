@@ -1,119 +1,41 @@
 import { NavLink } from "react-router-dom";
-import { FaHome, FaSitemap, FaRegUser, FaBuilding, FaTools, FaCalculator } from "react-icons/fa";
-import { PiNotePencilDuotone } from "react-icons/pi";
-import { GrMoney } from "react-icons/gr";
-import { BiLogOut } from "react-icons/bi";
-import { useState } from "react";
-import buildicon_white from '../assets/buildicon-white.svg';
-import buildicon_blue from '../assets/buildicon-blue.svg'
-import fix_white from '../assets/fix-white.svg';
-import fix_blue from '../assets/fix-blue.svg'
+import { FaHome, FaBuilding, FaCalculator, FaTools } from "react-icons/fa";
 
-const Sidebar = ({ expanded, toggleSidebar }) => {
-  const [isLogoHidden, setIsLogoHidden] = useState(false);
+const Sidebar = ({ expanded }) => {
   return (
     <div
-      className={`flex flex-col h-[100%] transition-all duration-300
-        bg-[#031C30] text-[#edf2f7] ${expanded ? "w-[250px]" : "w-[80px]"}`}
+      className={`flex flex-col h-[100%] transition-all duration-300 bg-[#0388B4] text-[#edf2f7] 
+        ${expanded ? "w-[250px]" : "w-[80px]"} shadow-lg`}
     >
-      {/* Sidebar Header */}
-      {/* <div className="flex flex-col items-center pt-4">
-        <div className="relative flex items-center justify-center w-full">
-          <span
-            className={`flex-1 text-center font-bold text-lg transition-opacity duration-300 
-              ${!expanded || isLogoHidden ? "opacity-0" : "opacity-100"}`}
-          >
-            BK-MANARATE
-          </span>
-          <button
-            onClick={toggleSidebar}
-            className="absolute right-2 text-xl cursor-pointer bg-none border-none"
-            aria-label="Toggle Sidebar"
-          >
-            {expanded ? "<" : ">"}
-          </button>
-        </div>
+      <div className="flex-1 mt-6 space-y-3 px-3">
+        <SidebarLink to="overview" icon={<FaHome />} label="All Buildings" expanded={expanded} />
+        <SidebarLink to="detail/h1" icon={<FaBuilding />} label="BK.H1" expanded={expanded} />
+        <SidebarLink to="detail/h2" icon={<FaBuilding />} label="BK.H2" expanded={expanded} />
+        <SidebarLink to="detail/h3" icon={<FaBuilding />} label="BK.H3" expanded={expanded} />
+        <SidebarLink to="detail/h6" icon={<FaBuilding />} label="BK.H6" expanded={expanded} />
+        <SidebarLink to="detail/calculation" icon={<FaCalculator />} label="Depreciation" expanded={expanded} />
+        <SidebarLink to="history" icon={<FaTools />} label="Repair Log" expanded={expanded} />
       </div>
-      <div className="my-2 mt-8 border w-full border-gray-600"></div> */}
-      <div className="h-[100px] bg-[#0388B4] "></div>
 
-      {/* Navigation Links */}
-      <div className="h-[100%] text-lg font-medium bg-[#0388B4]">
-        <NavLink
-          to="overview" end
-          className={({ isActive }) =>
-            `flex items-center justify-start mx-[20px] text-[25px] p-2 hover:bg-[#ffffff]  hover:text-[#0388B4] transition-colors my-[20px] rounded-[30px] h-[50px] min-h-fit ${isActive ? "bg-[#ffffff] text-[#0388B4]" : ""
-            }`
-          }
-        >
-          <FaHome />
-          {expanded && <span className="ml-2">All Buildings</span>}
-        </NavLink>
-        <NavLink
-          to="detail/h1" end
-          className={({ isActive }) =>
-            `flex items-center justify-start mx-[20px] text-[25px] p-2 hover:bg-[#ffffff]  hover:text-[#0388B4] transition-colors my-[20px] rounded-[30px] h-[50px] ${isActive ? "bg-[#ffffff] text-[#0388B4]" : ""
-            }`
-          }
-        >
-          <FaBuilding />
-          {expanded && <span className="ml-2">BK.H1</span>}
-        </NavLink>
-        <NavLink
-          to="detail/h2" end
-          className={({ isActive }) =>
-            `flex items-center justify-start mx-[20px] text-[25px] p-2 hover:bg-[#ffffff]  hover:text-[#0388B4] transition-colors my-[20px] rounded-[30px] h-[50px] ${isActive ? "bg-[#ffffff] text-[#0388B4]" : ""
-            }`
-          }
-        >
-          <FaBuilding />
-          {expanded && <span className="ml-2">BK.H2</span>}
-        </NavLink>
-        <NavLink
-          to="detail/h3" end
-          className={({ isActive }) =>
-            `flex items-center justify-start mx-[20px] text-[25px] p-2 hover:bg-[#ffffff]  hover:text-[#0388B4] transition-colors my-[20px] rounded-[30px] h-[50px] ${isActive ? "bg-[#ffffff] text-[#0388B4]" : ""
-            }`
-          }
-        >
-          <FaBuilding />
-          {expanded && <span className="ml-2">BK.H3</span>}
-        </NavLink>
-        <NavLink
-          to="detail/h6" end
-          className={({ isActive }) =>
-            `flex items-center justify-start mx-[20px] text-[25px] p-2 hover:bg-[#ffffff]  hover:text-[#0388B4] transition-colors my-[20px] rounded-[30px] h-[50px] ${isActive ? "bg-[#ffffff] text-[#0388B4]" : ""
-            }`
-          }
-        >
-          <FaBuilding />
-          {expanded && <span className="ml-2">BK.H6</span>}
-        </NavLink>
-
-        <NavLink
-          to="detail/calculation" end
-          className={({ isActive }) =>
-            `flex items-center justify-start mx-[20px] text-[25px] p-2 hover:bg-[#ffffff]  hover:text-[#0388B4] transition-colors my-[20px] rounded-[30px] h-[50px] ${isActive ? "bg-[#ffffff] text-[rgb(0,185,219)]" : ""
-            }`
-          }
-        >
-          <FaCalculator />
-          {expanded && <span className="ml-2">Depreciation</span>}
-        </NavLink>
-        <NavLink
-          to="history" end
-          className={({ isActive }) =>
-            `flex items-center justify-start mx-[20px] text-[25px] p-2 hover:bg-[#ffffff]  hover:text-[#0388B4] transition-colors my-[20px] rounded-[30px] h-[50px] ${isActive ? "bg-[#ffffff] text-[rgb(0,185,219)]" : ""
-            }`
-          }
-        >
-          <FaTools />
-          {expanded && <span className="ml-2">Repair Log</span>}
-        </NavLink>
-
-
-      </div>
+      <div className="h-[50px]"></div>
     </div>
   );
 };
+
+// Component Sidebar Link
+const SidebarLink = ({ to, icon, label, expanded }) => {
+  return (
+    <NavLink
+      to={to}
+      className={({ isActive }) =>
+        `flex items-center mx-[15px] text-lg font-medium p-3 rounded-lg transition-all duration-300 
+         ${isActive ? "bg-[#ffffff] text-[#0388B4]" : "text-white hover:bg-[#ffffff] hover:text-[#0388B4]"}`
+      }
+    >
+      {icon}
+      {expanded && <span className="ml-3">{label}</span>}
+    </NavLink>
+  );
+};
+
 export default Sidebar;

@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 
 import com.example.asset_management.dto.response.room.RoomResponse;
 import com.example.asset_management.repository.AssetRepository;
-import com.example.asset_management.repository.BuildingRepository;
 import com.example.asset_management.repository.RoomRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -16,7 +15,6 @@ import lombok.RequiredArgsConstructor;
 public class RoomService {
     private final RoomRepository roomRepository;
     private final AssetRepository assetRepository;
-    private final BuildingRepository buildingRepository;
 
     public List<RoomResponse> getRoomsByBuilding(Long buildingId) {
         return roomRepository.findByBuildingId(buildingId).stream()
