@@ -6,19 +6,17 @@ const DepreciationCal = () => {
   const [selectedAsset, setSelectedAsset] = useState(null);
   const token = localStorage.getItem("TOKEN");
 
-  // Fetch tổng hợp tài sản theo năm
   useEffect(() => {
     const fetchAssets = async () => {
       try {
         const response = await fetch(
           `http://localhost:8080/api/asset/summary?year=${year}`,
           {
-            method: "PUT",
+            method: "GET",
             headers: {
               "Content-Type": "application/json",
               Authorization: `Bearer ${token}`,
             },
-            body: JSON.stringify({}),
           }
         );
 
@@ -27,27 +25,25 @@ const DepreciationCal = () => {
         }
 
         const data = await response.json();
-        setAssets(data);
+        setAssets(data.result);
       } catch (error) {
-        console.error("Error fetching asset summary:", error);
+        console.error("Error fetching asset details:", error);
       }
     };
 
     fetchAssets();
   }, [year, token]);
 
-  // Fetch chi tiết tài sản
   const fetchAssetDetail = async (assetType) => {
     try {
       const response = await fetch(
         `http://localhost:8080/api/asset/detail/byAssetType?year=${year}&assetType=${assetType}`,
         {
-          method: "PUT",
+          method: "GET",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({}),
         }
       );
 
@@ -56,7 +52,7 @@ const DepreciationCal = () => {
       }
 
       const data = await response.json();
-      setSelectedAsset(data);
+      setSelectedAsset(data.result);
     } catch (error) {
       console.error("Error fetching asset detail:", error);
     }
@@ -64,7 +60,6 @@ const DepreciationCal = () => {
 
   return (
     <div className="py-4 px-6 lg:px-8 flex flex-col items-center">
-      {/* Tiêu đề & chọn năm */}
       <div className="mt-4 flex items-center justify-center space-x-4">
         <h2 className="text-xl font-bold bg-blue-500 text-white py-2 px-6 rounded-lg">
           DEPRECIATION TABLE
@@ -81,31 +76,34 @@ const DepreciationCal = () => {
         </select>
       </div>
 
-      {/* Bảng tài sản */}
       <div className="mt-10 w-full max-w-7xl overflow-x-auto">
         <table className="min-w-full border-collapse border border-blue-400">
           <thead className="bg-blue-200">
             <tr>
-              <th className="border border-blue-400 px-4 py-2 text-center">Type</th>
-              <th className="border border-blue-400 px-4 py-2 text-center">Brand</th>
-              <th className="border border-blue-400 px-4 py-2 text-center">Quantity</th>
-              <th className="border border-blue-400 px-4 py-2 text-center">Total Original Value (VNĐ)</th>
-              <th className="border border-blue-400 px-4 py-2 text-center">Total Residual Value (VNĐ)</th>
-              <th className="border border-blue-400 px-4 py-2 text-center">Action</th>
+              <th className="border border-blue-400 px-4 py-2 text-center">Asset Type</th>
+              <th className="border border-blue-400 px-4 py-2 text-center">Total Count</th>
+              <th className="border border-blue-400 px-4 py-2 text-center">Original Value (VNĐ)</th>
+              <th className="border border-blue-400 px-4 py-2 text-center">Current Value (VNĐ)</th>
+              <th className="border border-blue-400 px-4 py-2 text-center">Depreciation Rate (%)</th>
+              <th className="border border-blue-400 px-4 py-2 text-center">Details</th>
             </tr>
           </thead>
           <tbody>
             {assets.map((item, index) => (
               <tr key={index} className="bg-white hover:bg-blue-100">
-                <td className="border border-blue-400 px-4 py-2 text-center">{item.type}</td>
-                <td className="border border-blue-400 px-4 py-2 text-center">{item.brand}</td>
-                <td className="border border-blue-400 px-4 py-2 text-center">{item.quantity}</td>
-                <td className="border border-blue-400 px-4 py-2 text-center">{item.total_original_value.toFixed(2)}</td>
-                <td className="border border-blue-400 px-4 py-2 text-center">{item.total_residual_value.toFixed(2)}</td>
+                <td className="border border-blue-400 px-4 py-2 text-center">{item.assetType}</td>
+                <td className="border border-blue-400 px-4 py-2 text-center">{item.totalCount}</td>
+                <td className="border border-blue-400 px-4 py-2 text-center">{item.totalOriginalValue.toFixed(2)}</td>
+                <td className="border border-blue-400 px-4 py-2 text-center">{item.totalCurrentValue.toFixed(2)}</td>
+                <td className="border border-blue-400 px-4 py-2 text-center">
+                  {item.totalOriginalValue > 0
+                    ? ((1 - item.totalCurrentValue / item.totalOriginalValue) * 100).toFixed(2)
+                    : "N/A"}
+                </td>
                 <td className="border border-blue-400 px-4 py-2 text-center">
                   <button
-                    onClick={() => fetchAssetDetail(item.type)}
-                    className="bg-blue-500 text-white px-3 py-1 rounded-md hover:bg-blue-600"
+                    className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600"
+                    onClick={() => fetchAssetDetail(item.assetType)}
                   >
                     Detail
                   </button>
@@ -116,37 +114,38 @@ const DepreciationCal = () => {
         </table>
       </div>
 
-      {/* Modal chi tiết tài sản */}
       {selectedAsset && (
-        <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 backdrop-blur-lg">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-3/4 max-w-4xl">
+        <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 backdrop-blur-sm transition-opacity duration-300">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-3/4 max-w-4xl opacity-100 transition-opacity duration-300">
             <h3 className="text-2xl font-bold text-blue-600 mb-4 text-center uppercase">
-              {selectedAsset.type} Details
+              Asset Details
             </h3>
-
             <table className="min-w-full border-collapse border border-blue-400">
               <thead className="bg-blue-200">
                 <tr>
-                  <th className="border border-blue-400 px-6 py-3 text-center">Model</th>
-                  <th className="border border-blue-400 px-6 py-3 text-center">Material</th>
+                  <th className="border border-blue-400 px-6 py-3 text-center">Series</th>
+                  <th className="border border-blue-400 px-6 py-3 text-center">Building</th>
+                  <th className="border border-blue-400 px-6 py-3 text-center">Room</th>
+                  <th className="border border-blue-400 px-6 py-3 text-center">Original Value (VNĐ)</th>
+                  <th className="border border-blue-400 px-6 py-3 text-center">Current Value (VNĐ)</th>
                   <th className="border border-blue-400 px-6 py-3 text-center">Depreciation Rate (%)</th>
-                  <th className="border border-blue-400 px-6 py-3 text-center">Estimated Life (Years)</th>
-                  <th className="border border-blue-400 px-6 py-3 text-center">Residual Value (VNĐ)</th>
+                  <th className="border border-blue-400 px-6 py-3 text-center">Years Used</th>
                 </tr>
               </thead>
               <tbody>
-                {selectedAsset.details.map((item, index) => (
+                {selectedAsset.map((item, index) => (
                   <tr key={index} className="bg-white">
-                    <td className="border border-blue-400 px-6 py-3 text-center">{item.model}</td>
-                    <td className="border border-blue-400 px-6 py-3 text-center">{item.material}</td>
-                    <td className="border border-blue-400 px-6 py-3 text-center">{item.depreciation_rate * 100}%</td>
-                    <td className="border border-blue-400 px-6 py-3 text-center">{item.estimated_life}</td>
-                    <td className="border border-blue-400 px-6 py-3 text-center">{item.residual_value.toFixed(2)}</td>
+                    <td className="border border-blue-400 px-6 py-3 text-center">{item.series}</td>
+                    <td className="border border-blue-400 px-6 py-3 text-center">{item.buildingName}</td>
+                    <td className="border border-blue-400 px-6 py-3 text-center">{item.roomNumber}</td>
+                    <td className="border border-blue-400 px-6 py-3 text-center">{item.originalValue.toFixed(2)}</td>
+                    <td className="border border-blue-400 px-6 py-3 text-center">{item.currentValue.toFixed(2)}</td>
+                    <td className="border border-blue-400 px-6 py-3 text-center">{item.depreciationRate}%</td>
+                    <td className="border border-blue-400 px-6 py-3 text-center">{item.yearsUsed}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
-
             <button onClick={() => setSelectedAsset(null)} className="mt-6 w-full bg-red-500 text-white px-6 py-3 rounded-md hover:bg-red-600">
               Close
             </button>
