@@ -11,6 +11,11 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class AccountUpdateRequest {
+
+    String oldPassword;
+
     @Size(min = 8, message = "INVALID_PASSWORD")
-    String password;
+    String newPassword;
+
+    String confirmPassword;
 }

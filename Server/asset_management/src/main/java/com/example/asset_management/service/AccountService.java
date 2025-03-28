@@ -49,7 +49,12 @@ public class AccountService {
         Optional<Account> accountOpt = accountRepository.findById(id);
         if (accountOpt.isPresent()) {
             Account account = accountOpt.get();
-            account.setPassword(passwordEncoder.encode(accountRequest.getPassword()));
+            if(passwordEncoder.matches(accountRequest.getOldPassword(), account.getPassword()) &&
+               accountRequest.getConfirmPassword().equals(accountRequest.getNewPassword())) {
+
+                account.setPassword(passwordEncoder.encode(accountRequest.getNewPassword()));
+            }
+            else {throw new RuntimeException("Mật khẩu cũ hoặc mật khẩu xác nhận không đúng");}
             Account updatedAccount = accountRepository.save(account);
             return mapToAccountResponse(updatedAccount);
         }
