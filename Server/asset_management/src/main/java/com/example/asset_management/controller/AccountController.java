@@ -7,6 +7,7 @@ import com.example.asset_management.dto.request.account.AccountCreationRequest;
 import com.example.asset_management.dto.request.account.AccountUpdateRequest;
 import com.example.asset_management.dto.response.ApiResponse;
 import com.example.asset_management.dto.response.account.AccountResponse;
+import com.example.asset_management.repository.AccountRepository;
 import com.example.asset_management.service.AccountService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -25,6 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class AccountController {
     private final AccountService accountService;
+    private final AccountRepository accountRepository;
 
     // Create Account
     @PostMapping
@@ -105,6 +107,9 @@ public class AccountController {
 
     @PostMapping("/forgot-password")
     public ResponseEntity<ApiResponse<String>> sendResetCode(@RequestParam String email) {
+        if(accountRepository.findByEmail(email).isEmpty()){
+            return ResponseEntity.ok(new ApiResponse<>(400, "Email không hợp lệ", null));
+        }
         String message = accountService.sendResetCode(email);
         return ResponseEntity.ok(new ApiResponse<>(200, message, null));
     }

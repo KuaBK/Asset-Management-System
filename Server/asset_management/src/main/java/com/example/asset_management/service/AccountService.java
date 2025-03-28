@@ -39,6 +39,7 @@ public class AccountService {
         Account account = Account.builder()
                 .username(accountRequest.getUsername())
                 .role(Role.EMPLOYEE)
+                .email(accountRequest.getEmail())
                 .build();
         account.setPassword(passwordEncoder.encode(accountRequest.getPassword()));
         Account savedAccount = accountRepository.save(account);
