@@ -1,5 +1,5 @@
 import logo from '../../assets/logo.svg'
-import bell from '../../assets/mdi_bell.svg'
+// import bell from '../../assets/mdi_bell.svg'
 import logout from '../../assets/logout.svg'
 import changepw from '../../assets/changePW.svg'
 import { useEffect, useRef, useState } from 'react'
@@ -36,11 +36,11 @@ const Header = () => {
                 <div className='w-[200px] font-[700] text-[25px] text-[#0388B4] ml-[20px]'>Asset Management System</div>
             </div>
             <div className='flex items-center gap-[50px] relative'>
-                <img
+                {/* <img
                     src={bell}
                     className="w-[50px] h-[50px] rounded-full object-cover"
                     alt="img"
-                />
+                /> */}
                 <img
                     onClick={handlePopUp}
                     ref = {avt}

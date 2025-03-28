@@ -1,146 +1,159 @@
 import "./style.css"
-import builderror from '../../assets/buildError.jpg';
+// import builderror from '../../assets/buildError.jpg';
 import build1 from '../../assets/hcmut-icon.svg';
 import asset from '../../assets/asset.svg'
 import { useEffect, useState } from 'react';
 import ProgressBar from "@ramonak/react-progress-bar";
-var res = {
-    data: [
-        {
-            "id": 1,
-            "name": "H1",
-            "totalRooms": 4,
-            "assets": {
-                "totalQuan": 20,
-                "brokenQuan": 2
-            },
-            "teacherChair": {
-                "total": 6,
-                "broken": 1
-            },
-            "studentDesk": {
-                "total": 2,
-                "broken": 0
-            },
-            "blackboard": {
-                "total": 2,
-                "broken": 0
-            },
-            "projector": {
-                "total": 3,
-                "broken": 0
-            },
-            "projectorScreen": {
-                "total": 1,
-                "broken": 1
-            },
-            "ceilingFan": {
-                "total": 5,
-                "broken": 0
-            },
-            "loudspeaker": {
-                "total": 0,
-                "broken": 0
-            },
-            "electricLight": {
-                "total": 1,
-                "broken": 0
-            }
-        },
-        {
-            "id": 2,
-            "name": "H2",
-            "totalRooms": 4,
-            "assets": {
-                "totalQuan": 10,
-                "brokenQuan": 1
-            },
-            "teacherChair": {
-                "total": 1,
-                "broken": 0
-            },
-            "studentDesk": {
-                "total": 2,
-                "broken": 0
-            },
-            "blackboard": {
-                "total": 1,
-                "broken": 0
-            },
-            "projector": {
-                "total": 1,
-                "broken": 0
-            },
-            "projectorScreen": {
-                "total": 1,
-                "broken": 1
-            },
-            "ceilingFan": {
-                "total": 3,
-                "broken": 0
-            },
-            "loudspeaker": {
-                "total": 1,
-                "broken": 0
-            },
-            "electricLight": {
-                "total": 0,
-                "broken": 0
-            }
-        },
-        {
-            "id": 3,
-            "name": "H3",
-            "totalRooms": 4,
-            "assets": {
-                "totalQuan": 8,
-                "brokenQuan": 4
-            },
-            "teacherChair": {
-                "total": 0,
-                "broken": 0
-            },
-            "studentDesk": {
-                "total": 1,
-                "broken": 1
-            },
-            "blackboard": {
-                "total": 1,
-                "broken": 0
-            },
-            "projector": {
-                "total": 1,
-                "broken": 0
-            },
-            "projectorScreen": {
-                "total": 1,
-                "broken": 0
-            },
-            "ceilingFan": {
-                "total": 0,
-                "broken": 0
-            },
-            "loudspeaker": {
-                "total": 2,
-                "broken": 2
-            },
-            "electricLight": {
-                "total": 2,
-                "broken": 1
-            }
-        }
-    ],
-    totalBuildings: 4,
-    totalAssets: 237,
-    normalAssets: 200
-};
+// import H3 from '../../assets/h3.jpg'
+// import { build } from "vite";
+// var res = {
+//     data: [
+//         {
+//             "id": 1,
+//             "name": "H1",
+//             "totalRooms": 4,
+//             "assets": {
+//                 "totalQuan": 20,
+//                 "brokenQuan": 2
+//             },
+//             "teacherChair": {
+//                 "total": 6,
+//                 "broken": 1
+//             },
+//             "studentDesk": {
+//                 "total": 2,
+//                 "broken": 0
+//             },
+//             "blackboard": {
+//                 "total": 2,
+//                 "broken": 0
+//             },
+//             "projector": {
+//                 "total": 3,
+//                 "broken": 0
+//             },
+//             "projectorScreen": {
+//                 "total": 1,
+//                 "broken": 1
+//             },
+//             "ceilingFan": {
+//                 "total": 5,
+//                 "broken": 0
+//             },
+//             "loudspeaker": {
+//                 "total": 0,
+//                 "broken": 0
+//             },
+//             "electricLight": {
+//                 "total": 1,
+//                 "broken": 0
+//             }
+//         },
+//         {
+//             "id": 2,
+//             "name": "H2",
+//             "totalRooms": 4,
+//             "assets": {
+//                 "totalQuan": 10,
+//                 "brokenQuan": 1
+//             },
+//             "teacherChair": {
+//                 "total": 1,
+//                 "broken": 0
+//             },
+//             "studentDesk": {
+//                 "total": 2,
+//                 "broken": 0
+//             },
+//             "blackboard": {
+//                 "total": 1,
+//                 "broken": 0
+//             },
+//             "projector": {
+//                 "total": 1,
+//                 "broken": 0
+//             },
+//             "projectorScreen": {
+//                 "total": 1,
+//                 "broken": 1
+//             },
+//             "ceilingFan": {
+//                 "total": 3,
+//                 "broken": 0
+//             },
+//             "loudspeaker": {
+//                 "total": 1,
+//                 "broken": 0
+//             },
+//             "electricLight": {
+//                 "total": 0,
+//                 "broken": 0
+//             }
+//         },
+//         {
+//             "id": 3,
+//             "name": "H3",
+//             "totalRooms": 4,
+//             "assets": {
+//                 "totalQuan": 8,
+//                 "brokenQuan": 4
+//             },
+//             "teacherChair": {
+//                 "total": 0,
+//                 "broken": 0
+//             },
+//             "studentDesk": {
+//                 "total": 1,
+//                 "broken": 1
+//             },
+//             "blackboard": {
+//                 "total": 1,
+//                 "broken": 0
+//             },
+//             "projector": {
+//                 "total": 1,
+//                 "broken": 0
+//             },
+//             "projectorScreen": {
+//                 "total": 1,
+//                 "broken": 0
+//             },
+//             "ceilingFan": {
+//                 "total": 0,
+//                 "broken": 0
+//             },
+//             "loudspeaker": {
+//                 "total": 2,
+//                 "broken": 2
+//             },
+//             "electricLight": {
+//                 "total": 2,
+//                 "broken": 1
+//             }
+//         }
+//     ],
+//     totalBuildings: 4,
+//     totalAssets: 237,
+//     normalAssets: 200
+// };
 
 
 const Fraction = ({ numerator, denominator }) => {
+    // const res = numerator 
+    // return (
+    //     <span className="translate-y-[-10px]">
+    //         {/* {denominator?():()} */}
+    //         {/* <sup className="text-[14px] font-semibold">{numerator}</sup>/<sub className="text-[14px] font-semibold">{denominator}</sub> */}\
+    //         {/* <sup></sup> */}
+    //     </span>
+    // );
+    const percentage = (numerator / denominator) * 100;
+  
     return (
-        <span className="translate-y-[-10px]">
-            <sup className="text-[14px] font-semibold">{numerator}</sup>/<sub className="text-[14px] font-semibold">{denominator}</sub>
-        </span>
+        <div className="flex justify-between gap-[3px] translate-y-[-8px]">
+          {(denominator!=0)&&(<span className="text-sm font-medium text-gray-700">{percentage.toFixed(0)}%</span>)}
+          <span className="text-sm text-black truncate">Total: {denominator}</span>
+        </div>
     );
 };
 const CustomProgressBar = ({
@@ -217,9 +230,9 @@ const Card = ({ name, totalQuan, totalRoom, brokenQuan, tableTotal, tableBroken,
                 <div className="flip-card-back py-[10px] bg-white">
                     <div className=''>
                         <p className='text-start ml-[10%]'>Projectors</p>
-                        <div className="flex justify-center w-[80%] m-auto ">
+                        <div className="flex justify-between w-[80%] m-auto ">
                             <CustomProgressBar
-                                className='w-[90%]'
+                                className='w-[60%] max-w-[60%]'
                                 completed={((ProjectorsTotal - ProjectorsBroken) / ProjectorsTotal) * 100}
                                 bgColor={((ProjectorsTotal - ProjectorsBroken) / ProjectorsTotal) * 100 < 90 ? "#FF665C" : "#5CFF66"}
                                 label={"Projectors"}
@@ -229,9 +242,9 @@ const Card = ({ name, totalQuan, totalRoom, brokenQuan, tableTotal, tableBroken,
                     </div>
                     <div className=''>
                         <p className='text-start ml-[10%]'>Projection screens</p>
-                        <div className="flex justify-center w-[80%] m-auto ">
+                        <div className="flex justify-between w-[80%] m-auto ">
                             <CustomProgressBar
-                                className='w-[90%]'
+                                className='w-[60%] max-w-[60%]'
                                 completed={((ProScreenTotal - ProScreenBroken) / ProScreenTotal) * 100}
                                 bgColor={((ProScreenTotal - ProScreenBroken) / ProScreenTotal) * 100 < 90 ? "#FF665C" : "#5CFF66"}
                                 label={"Projection screens"}
@@ -241,9 +254,9 @@ const Card = ({ name, totalQuan, totalRoom, brokenQuan, tableTotal, tableBroken,
                     </div>
                     <div className=''>
                         <p className='text-start ml-[10%]'>Student Desk</p>
-                        <div className="flex justify-center w-[80%] m-auto ">
+                        <div className="flex justify-between w-[80%] m-auto ">
                             <CustomProgressBar
-                                className='w-[90%]'
+                                className='w-[60%] max-w-[60%]'
                                 completed={((tableTotal - tableBroken) / tableTotal) * 100}
                                 bgColor={((tableTotal - tableBroken) / tableTotal) * 100 < 90 ? "#FF665C" : "#5CFF66"}
                                 label={"Table"}
@@ -253,9 +266,9 @@ const Card = ({ name, totalQuan, totalRoom, brokenQuan, tableTotal, tableBroken,
                     </div>
                     <div className=''>
                         <p className='text-start ml-[10%]'>Teacher Chair</p>
-                        <div className="flex justify-center w-[80%] m-auto ">
+                        <div className="flex justify-between w-[80%] m-auto ">
                             <CustomProgressBar
-                                className='w-[90%]'
+                                className='w-[60%] max-w-[60%]'
                                 completed={((chairTotal - chairBroken) / chairTotal) * 100}
                                 bgColor={((chairTotal - chairBroken) / chairTotal) * 100 < 90 ? "#FF665C" : "#5CFF66"}
                                 label={"Chair"}
@@ -265,9 +278,9 @@ const Card = ({ name, totalQuan, totalRoom, brokenQuan, tableTotal, tableBroken,
                     </div>
                     <div className=''>
                         <p className='text-start ml-[10%]'>Blackboards</p>
-                        <div className="flex justify-center w-[80%] m-auto ">
+                        <div className="flex justify-between w-[80%] m-auto ">
                             <CustomProgressBar
-                                className='w-[90%]'
+                                className='w-[60%] max-w-[60%]'
                                 completed={((BBoardTotal - BBoardBroken) / BBoardTotal) * 100}
                                 bgColor={((BBoardTotal - BBoardBroken) / BBoardTotal) * 100 < 90 ? "#FF665C" : "#5CFF66"}
                                 label={"Blackboards"}
@@ -277,9 +290,9 @@ const Card = ({ name, totalQuan, totalRoom, brokenQuan, tableTotal, tableBroken,
                     </div>
                     <div className=''>
                         <p className='text-start ml-[10%]'>Ceiling fans</p>
-                        <div className="flex justify-center w-[80%] m-auto ">
+                        <div className="flex justify-between w-[80%] m-auto ">
                             <CustomProgressBar
-                                className='w-[90%]'
+                                className='w-[60%] max-w-[60%]'
                                 completed={((fanTotal - fanBroken) / fanTotal) * 100}
                                 bgColor={((fanTotal - fanBroken) / fanTotal) * 100 < 90 ? "#FF665C" : "#5CFF66"}
                                 label={"Ceiling fans"}
@@ -289,9 +302,9 @@ const Card = ({ name, totalQuan, totalRoom, brokenQuan, tableTotal, tableBroken,
                     </div>
                     <div className=''>
                         <p className='text-start ml-[10%]'>Loud speakers</p>
-                        <div className="flex justify-center w-[80%] m-auto ">
+                        <div className="flex justify-between w-[80%] m-auto ">
                             <CustomProgressBar
-                                className='w-[90%]'
+                                className='w-[60%] max-w-[60%]'
                                 completed={((loudSpeakerTotal - loudSpeakerBroken) / loudSpeakerTotal) * 100}
                                 bgColor={((loudSpeakerTotal - loudSpeakerBroken) / loudSpeakerTotal) * 100 < 90 ? "#FF665C" : "#5CFF66"}
                                 label={"Loud speakers"}
@@ -301,9 +314,9 @@ const Card = ({ name, totalQuan, totalRoom, brokenQuan, tableTotal, tableBroken,
                     </div>
                     <div className=''>
                         <p className='text-start ml-[10%]'>Electric lights</p>
-                        <div className="flex justify-center w-[80%] m-auto ">
+                        <div className="flex justify-between w-[80%] m-auto ">
                             <CustomProgressBar
-                                className='w-[90%]'
+                                className='w-[60%] max-w-[60%]'
                                 completed={((lightTotal - lightBroken) / lightTotal) * 100}
                                 bgColor={((lightTotal - lightBroken) / lightTotal) * 100 < 90 ? "#FF665C" : "#5CFF66"}
                                 label={"Electric lights"}
@@ -331,9 +344,15 @@ const OverView = () => {
         TotalAssets: 0
     });
     useEffect(() => {
+        var token = localStorage.getItem("TOKEN");
         const fetchAssetSummary = async () => {
             try {
-                const response = await fetch("http://localhost:8080/api/buildings/assets-summary");
+                const response = await fetch("http://localhost:8080/api/buildings/assets-summary",{
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    }
+                });
 
                 if (!response.ok) {
 
@@ -352,7 +371,12 @@ const OverView = () => {
         };
         const fetchAssetTotal = async () => {
             try {
-                const response = await fetch("http://localhost:8080/api/buildings/total/infor");
+                const response = await fetch("http://localhost:8080/api/buildings/total/infor",{
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    }
+                });
 
                 if (!response.ok) {
 

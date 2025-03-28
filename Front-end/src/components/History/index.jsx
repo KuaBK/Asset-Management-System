@@ -17,9 +17,15 @@ const History = () => {
             .replace(/\b\w/g, char => char.toUpperCase()); // Viết hoa chữ cái đầu: "Electric Light"
     }
     useEffect(() => {
+        const token= localStorage.getItem("TOKEN");
             const fetchLog = async () => {
                 try {
-                    const response = await fetch("http://localhost:8080/api/asset-log");
+                    const response = await fetch("http://localhost:8080/api/asset-log",{
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Authorization": `Bearer ${token}`
+                        }
+                    });
     
                     if (!response.ok) {
     
