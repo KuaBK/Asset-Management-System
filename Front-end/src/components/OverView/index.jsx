@@ -199,8 +199,8 @@ const CustomProgressBar = ({
 // export default CustomProgressBar;
 const Card = ({ name, totalQuan, totalRoom, brokenQuan, tableTotal, tableBroken, chairTotal, chairBroken, BBoardTotal, BBoardBroken, ProjectorsTotal, ProjectorsBroken, ProScreenTotal, ProScreenBroken, fanTotal, fanBroken, loudSpeakerTotal, loudSpeakerBroken, lightTotal, lightBroken }) => {
     return (
-        <div class="flip-card">
-            <div class="flip-card-inner">
+        <div className="flip-card">
+            <div className="flip-card-inner">
                 <div className="flip-card-front relative flex flex-col justify-between rounded-[15px] bg-white p-[20px] ">
                     <div className="text-[32px] font-bold text-center ">{name}</div>
                     <img className='h[90%]' src={(((totalQuan - brokenQuan) / totalQuan) < 0.9) ? build1 : build1} alt="" />

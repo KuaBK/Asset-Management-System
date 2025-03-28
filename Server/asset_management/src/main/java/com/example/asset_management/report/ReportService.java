@@ -1,14 +1,5 @@
 package com.example.asset_management.report;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.springframework.stereotype.Service;
-
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import com.example.asset_management.entity.asset.Asset;
@@ -16,8 +7,14 @@ import com.example.asset_management.entity.asset.AssetType;
 import com.example.asset_management.repository.AssetRepository;
 import com.example.asset_management.repository.BuildingRepository;
 import com.example.asset_management.repository.RoomRepository;
-
 import lombok.RequiredArgsConstructor;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.stereotype.Service;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -28,15 +25,14 @@ public class ReportService {
     private final RoomRepository roomRepository;
     private final AssetRepository assetRepository;
 
-    public String generateAndUploadExcel(Long buildingId, Long roomId, AssetType assetType) throws Exception {
 
+    public String generateAndUploadExcel(Long buildingId, Long roomId, AssetType assetType) throws Exception {
         if (buildingId != 0 && !buildingRepository.existsById(buildingId)) {
             throw new IllegalArgumentException("Invalid building ID: " + buildingId);
         }
         if (roomId != 0 && !roomRepository.existsById(roomId)) {
             throw new IllegalArgumentException("Invalid room ID: " + roomId);
         }
-
         if (assetType == null) {
             throw new IllegalArgumentException("Asset Type không hợp lệ!");
         }
@@ -49,9 +45,9 @@ public class ReportService {
             assets = assetRepository.findByAssetType(assetType);
         } else if (roomId == 0 && assetType == AssetType.ALL) { // tòa cụ thể, tất cả phòng, tất cả đồ vật
             assets = assetRepository.findByBuildingId(buildingId);
-        } else if (roomId == 0) { // tòa cụ thể, tất cả phòng, đồ vật cụ thể
+        } else if (roomId == 0) {  // tòa cụ thể, tất cả phòng, đồ vật cụ thể
             assets = assetRepository.findByBuildingIdAndAssetType(buildingId, assetType);
-        } else if (assetType == AssetType.ALL) { // tòa cụ thể, phòng cụ thể , tất cả đồ vật
+        } else if (assetType == AssetType.ALL) {  // tòa cụ thể, phòng cụ thể , tất cả đồ vật
             assets = assetRepository.findByBuildingIdAndRoomId(buildingId, roomId);
         } else { // tòa cụ thể, phòng cụ thể , đồ vật cụ thể
             assets = assetRepository.findByBuildingIdAndRoomIdAndAssetType(buildingId, roomId, assetType);
@@ -70,22 +66,10 @@ public class ReportService {
             int startRow = rowIndex;
 
             String[] headers = {
-                "AssetType",
-                "Building",
-                "Room",
-                "Series",
-                "isBroken",
-                "Brand",
-                "Model",
-                "Type",
-                "material",
-                "Product Year",
-                "Date In System",
-                "Expire Date",
-                "Estimated Life",
-                "Original Value",
-                "Depreciation Value",
-                "Residual Value"
+                    "AssetType", "Building", "Room",
+                    "Series", "isBroken", "Brand", "Model", "Type", "material", "Product Year",
+                    "Date In System", "Expire Date", "Estimated Life",
+                    "Original Value", "Depreciation Rate", "Residual Value"
             };
 
             for (String header : headers) {
@@ -93,12 +77,9 @@ public class ReportService {
                 row.createCell(0).setCellValue(header);
 
                 switch (header) {
-                    case "AssetType" -> row.createCell(1)
-                            .setCellValue(asset.getAssetType().toString());
-                    case "Building" -> row.createCell(1)
-                            .setCellValue(asset.getBuilding().getName());
-                    case "Room" -> row.createCell(1)
-                            .setCellValue(asset.getRoom().getRoomNumber());
+                    case "AssetType" -> row.createCell(1).setCellValue(asset.getAssetType().toString());
+                    case "Building" -> row.createCell(1).setCellValue(asset.getBuilding().getName());
+                    case "Room" -> row.createCell(1).setCellValue(asset.getRoom().getRoomNumber());
 
                     case "Series" -> row.createCell(1).setCellValue(asset.getSeries());
                     case "isBroken" -> row.createCell(1).setCellValue(asset.getIsBroken());
@@ -108,44 +89,44 @@ public class ReportService {
                     case "material" -> row.createCell(1).setCellValue(asset.getMaterial());
                     case "Product Year" -> row.createCell(1).setCellValue(asset.getProductYear());
 
-                    case "Date In System" -> row.createCell(1)
-                            .setCellValue(asset.getDateInSystem().toString());
+                    case "Date In System" -> row.createCell(1).setCellValue(asset.getDateInSystem().toString());
                     case "Estimated Life" -> row.createCell(1).setCellValue(asset.getEstimatedLife() + " years");
-                    case "Expire Date" -> row.createCell(1)
-                            .setCellValue(asset.getExpireDate().toString());
+                    case "Expire Date" -> row.createCell(1).setCellValue(asset.getExpireDate().toString());
 
-                    case "Original Value" -> row.createCell(1).setCellValue(asset.getOriginalValue());
-                    case "Depreciation Value" -> row.createCell(1).setCellValue(asset.getDepreciationValue());
-                    case "Residual Value" -> row.createCell(1).setCellValue(asset.getResidualValue());
+                    case "Original Value" -> row.createCell(1).setCellValue(asset.getOriginalValue().intValue() + " USD");
+                    case "Depreciation Rate" -> row.createCell(1).setCellValue(asset.getDepreciationRate());
+                    case "Residual Value" -> row.createCell(1).setCellValue(asset.getResidualValue().intValue() + " USD");
                 }
                 rowIndex++;
             }
 
             Row headerRow = sheet.getRow(startRow) != null ? sheet.getRow(startRow) : sheet.createRow(startRow);
-            headerRow.createCell(3).setCellValue("Year");
-            headerRow.createCell(4).setCellValue("Residual Value");
+            headerRow.createCell(4).setCellValue("Year");
+            headerRow.createCell(5).setCellValue("Residual Value");
 
             int startYear = asset.getDateInSystem().getYear();
             double originalValue = asset.getOriginalValue();
-            double depreciationPerYear = asset.getDepreciationValue();
+            double depreciationRate = asset.getDepreciationRate();
             double remainingValue = originalValue;
 
             int year = startYear;
             int depreciationRowIndex = startRow + 1;
 
-            while (remainingValue >= 0) {
-                Row row = sheet.getRow(depreciationRowIndex) != null
-                        ? sheet.getRow(depreciationRowIndex)
-                        : sheet.createRow(depreciationRowIndex);
-                row.createCell(3).setCellValue(year);
-                row.createCell(4).setCellValue(remainingValue);
+            while (remainingValue >= 0 && year <= asset.getExpireDate().getYear()) {
+                Row row = sheet.getRow(depreciationRowIndex) != null ? sheet.getRow(depreciationRowIndex) : sheet.createRow(depreciationRowIndex);
+                row.createCell(4).setCellValue(year);
+                row.createCell(5).setCellValue(remainingValue);
 
-                remainingValue -= depreciationPerYear;
-                if (remainingValue < 0) break;
+                if (remainingValue == 0) break;
+
+                remainingValue *= (1 - depreciationRate);
+
+                if(remainingValue > 0 && remainingValue <1){
+                    remainingValue = 0;
+                }
                 year++;
                 depreciationRowIndex++;
             }
-
             rowIndex = Math.max(rowIndex, depreciationRowIndex) + 2;
         }
 
@@ -160,3 +141,5 @@ public class ReportService {
         return uploadResult.get("url").toString();
     }
 }
+
+

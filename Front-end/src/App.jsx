@@ -7,7 +7,8 @@ import OverView from "./components/OverView";
 import Detail from "./components/Detail";
 import DepreciationCal from "./components/DepreciationCal";
 import History from "./components/History";
-
+import ChangePassword from "./components/ChangePassword";
+import ForgotPassword from "./components/ForgotPassword";
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/home" element={<Home />}>
           <Route index element={<Navigate to="/home/overview" replace />} />
           <Route path="overview" element={<OverView />} />
@@ -22,6 +24,7 @@ function App() {
           <Route path="detail/:id" element={<Detail />} />
           <Route path="detail/calculation" element={<DepreciationCal />} />
         </Route>
+        <Route path="/change-password" element={<ChangePassword />} />
       </Routes>
     </Router>
   );

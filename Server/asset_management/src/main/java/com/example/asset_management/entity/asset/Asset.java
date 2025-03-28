@@ -69,5 +69,5 @@ public class Asset {
     private Double residualValue;
 
     @Column(nullable = false)
-    private Double depreciationValue;
+    private Double depreciationRate;
 }

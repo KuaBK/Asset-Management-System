@@ -2,7 +2,6 @@ package com.example.asset_management.service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -39,7 +38,7 @@ public class AccountService {
 
     public List<AccountResponse> getAllAccounts() {
         List<Account> accounts = accountRepository.findAll();
-        return accounts.stream().map(this::mapToAccountResponse).collect(Collectors.toList());
+        return accounts.stream().map(this::mapToAccountResponse).toList();
     }
 
     public Optional<AccountResponse> getAccountById(String id) {
@@ -51,7 +50,12 @@ public class AccountService {
         Optional<Account> accountOpt = accountRepository.findById(id);
         if (accountOpt.isPresent()) {
             Account account = accountOpt.get();
-            account.setPassword(passwordEncoder.encode(accountRequest.getPassword()));
+            if(passwordEncoder.matches(accountRequest.getOldPassword(), account.getPassword()) &&
+               accountRequest.getConfirmPassword().equals(accountRequest.getNewPassword())) {
+
+                account.setPassword(passwordEncoder.encode(accountRequest.getNewPassword()));
+            }
+            else {throw new RuntimeException("Mật khẩu cũ hoặc mật khẩu xác nhận không đúng");}
             Account updatedAccount = accountRepository.save(account);
             return mapToAccountResponse(updatedAccount);
         }

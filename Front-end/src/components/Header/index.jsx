@@ -25,6 +25,11 @@ const Header = () => {
           document.removeEventListener("mousedown", handleClickOutside);
         };
       }, []);
+
+    const handleChangePassword = () => {
+        navigate('/change-password');
+    };
+    
     const handleLogout = ()=>{
         localStorage.removeItem("token");
         navigate('/login')
@@ -50,7 +55,7 @@ const Header = () => {
                 />
                 {isOpen&& (
                 <div ref={popupRef} className='absolute bg-white top-[100%] right-[20%] p-[20px] rounded-b-[30px] rounded-tl-[30px] z-[5] shadow-black/20 w-fit border border-black'>
-                    <div  className='flex gap-[10px] w-fit mr-[20px] cursor-pointer'>
+                    <div className='flex gap-[10px] w-fit mr-[20px] cursor-pointer' onClick={handleChangePassword}>
                         <img src={changepw} alt="" />
                         <span className='font-[600] text[16px] whitespace-nowrap min-w-fit'>Change password</span>
                     </div>

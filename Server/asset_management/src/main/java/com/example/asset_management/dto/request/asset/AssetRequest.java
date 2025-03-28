@@ -24,5 +24,5 @@ public class AssetRequest {
     private LocalDate dateInSystem;
     private Integer estimatedLife;
     private Double originalValue;
-    private Double depreciationValue;
+    private Double depreciationRate;
 }

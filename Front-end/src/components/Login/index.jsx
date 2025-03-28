@@ -5,13 +5,14 @@ import { useNavigate } from 'react-router-dom';
 import eye from '../../assets/eye.svg'
 import eyeBlind from '../../assets/eye-blind.svg'
 import Swal from 'sweetalert2'
+import { jwtDecode } from "jwt-decode"
 
 const Login = () => {
     const navigate = useNavigate();
     const [userName, setUserName] = useState("");
     const [password, setPassword] = useState("");
     const [showPW, setShowPW] = useState(false);
-    const handleShowPassWord =()=>{
+    const handleShowPassWord = () => {
         setShowPW(!showPW)
     }
     // Hàm gọi API lấy dữ liệu người dùng
@@ -19,23 +20,17 @@ const Login = () => {
         const form = {
             username: userName,
             password: password
+        };
+
+        if (!form.username) {
+            Swal.fire({ icon: "error", title: "Oops...", text: "Please enter username!" });
+            return;
         }
-        if(form.username==""){
-            Swal.fire({
-                icon: "error",
-                title: "Oops...",
-                text: "Please enter username!"
-              });
-              return
+        if (!form.password) {
+            Swal.fire({ icon: "error", title: "Oops...", text: "Please enter password!" });
+            return;
         }
-        if(form.password==""){
-            Swal.fire({
-                icon: "error",
-                title: "Oops...",
-                text: "Please enter password!"
-              });
-              return
-        }
+
         try {
             const response = await fetch("http://localhost:8080/api/auth/login", {
                 method: "POST",
@@ -46,21 +41,22 @@ const Login = () => {
             });
 
             if (!response.ok) {
-                Swal.fire({
-                    icon: "error",
-                    title: "Oops...",
-                    text: "Tài khoản mật khẩu chưa đúng!"
-                  });
+                Swal.fire({ icon: "error", title: "Oops...", text: "Incorrect username or password!" });
                 throw new Error("Login failed");
             }
 
             const data = await response.json();
             if (response.ok) {
                 localStorage.setItem("TOKEN", data.result.token);
-                navigate("/home")
+                // Giải mã token để lấy userId
+                const decodedToken = jwtDecode(data.result.token);
+                const userId = decodedToken.accountId; // Thay đổi theo key thực tế trong token
+
+                // Lưu userId vào localStorage
+                localStorage.setItem("userId", userId);
+
+                navigate("/home");
             }
-            console.log("Login success:", data);
-            // Xử lý lưu token hoặc điều hướng nếu cần
         } catch (error) {
             console.error("Error logging in:", error);
         }
@@ -97,7 +93,7 @@ const Login = () => {
                             placeholder=""
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            type={showPW?'text':'password'}
+                            type={showPW ? 'text' : 'password'}
                             className="peer h-full w-full rounded-md border border-blue-gray-200 border-t-transparent bg-transparent px-3 py-3 font-sans text-sm font-semibold text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 focus:border-2 focus:border-[#5BA1F2] focus:border-t-transparent focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50"
                         />
                         <label
@@ -105,12 +101,12 @@ const Login = () => {
                         >
                             Password
                         </label>
-                        <img src={!showPW?eye:eyeBlind} onClick={handleShowPassWord} className='absolute top-1.5 right-2' alt="" />
+                        <img src={!showPW ? eye : eyeBlind} onClick={handleShowPassWord} className='absolute top-1.5 right-2' alt="" />
 
                     </div>
-                    <a href="#" className="text-blue-400 text-[16px] transition hover:underline text-start"
-                    >Forget your password?</a
-                    >
+                    <a href="/forgot-password" className="text-blue-400 text-[16px] transition hover:underline">
+                        Forgot your password?
+                    </a>
                 </div>
                 {/* <Link></Link>
                 <link className="text-blue-400 text-sm transition hover:underline" href="#" /> */}
@@ -125,19 +121,19 @@ const Login = () => {
                         Sign In
                     </button>
                     <div className="mt-4 text-center text-[16px] text-black">
-                    <p>
-                        By signing in, you agree to our
-                        <a href="#" className="text-blue-400 transition px-[3px] hover:underline"
-                        >Terms</a
-                        >
-                        and
-                        <a href="#" className="text-blue-400 transition px-[3px] hover:underline"
-                        >Privacy Policy</a
-                        >.
-                    </p>
+                        <p>
+                            By signing in, you agree to our
+                            <a href="#" className="text-blue-400 transition px-[3px] hover:underline"
+                            >Terms</a
+                            >
+                            and
+                            <a href="#" className="text-blue-400 transition px-[3px] hover:underline"
+                            >Privacy Policy</a
+                            >.
+                        </p>
+                    </div>
                 </div>
-                </div>
-                
+
             </div>
 
         </div>

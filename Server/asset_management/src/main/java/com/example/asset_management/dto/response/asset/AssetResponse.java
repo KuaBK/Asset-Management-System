@@ -28,7 +28,7 @@ public class AssetResponse {
     private LocalDate dateInSystem;
     private Integer estimatedLife;
     private Double originalValue;
-    private Double depreciationValue;
+    private Double depreciationRate;
     private LocalDate expireDate;
     private Double residualValue;
 }
