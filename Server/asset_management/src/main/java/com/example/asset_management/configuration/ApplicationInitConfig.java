@@ -26,6 +26,7 @@ public class ApplicationInitConfig {
 
     static final String ADMIN_USER_NAME = "admin";
     static final String ADMIN_PASSWORD = "admin";
+    static final String ADMIN_EMAIL = "admin@gmail.com";
 
     @Bean
     @ConditionalOnProperty(
@@ -41,6 +42,7 @@ public class ApplicationInitConfig {
                         .username(ADMIN_USER_NAME)
                         .password(passwordEncoder.encode(ADMIN_PASSWORD))
                         .role(Role.ADMIN)
+                        .email(ADMIN_EMAIL)
                         .build();
 
                 accountRepository.save(admin);
