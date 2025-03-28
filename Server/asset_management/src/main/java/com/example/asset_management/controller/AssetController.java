@@ -4,6 +4,7 @@ import com.example.asset_management.dto.request.asset.AssetRequest;
 import com.example.asset_management.dto.response.ApiResponse;
 import com.example.asset_management.dto.response.asset.AssetDetailByTypeResponse;
 import com.example.asset_management.dto.response.asset.AssetResponse;
+import com.example.asset_management.dto.response.asset.AssetRoomBuildingResponse;
 import com.example.asset_management.dto.response.asset.AssetTotalSummaryResponse;
 import com.example.asset_management.entity.asset.Asset;
 import com.example.asset_management.entity.asset.AssetType;
@@ -54,6 +55,13 @@ public class AssetController {
         } else {
             return ResponseEntity.status(404).body(new ApiResponse<>(404, "Asset not found", null));
         }
+    }
+
+    @GetMapping("/count/Room-Building")
+    public ResponseEntity<List<AssetRoomBuildingResponse>> getAssetDetailsByType(@RequestParam Long buildingId,
+                                                                                 @RequestParam Long roomId) {
+        List<AssetRoomBuildingResponse> assetDetails = assetService.getAssetDetailsRB(buildingId, roomId);
+        return ResponseEntity.ok(assetDetails);
     }
 
     @GetMapping("/count/{buildingId}")

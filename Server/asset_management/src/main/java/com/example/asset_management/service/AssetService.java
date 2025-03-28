@@ -3,6 +3,7 @@ package com.example.asset_management.service;
 import com.example.asset_management.dto.request.asset.AssetRequest;
 import com.example.asset_management.dto.response.asset.AssetDetailByTypeResponse;
 import com.example.asset_management.dto.response.asset.AssetResponse;
+import com.example.asset_management.dto.response.asset.AssetRoomBuildingResponse;
 import com.example.asset_management.dto.response.asset.AssetTotalSummaryResponse;
 import com.example.asset_management.entity.asset.AssetLogType;
 import com.example.asset_management.entity.asset.AssetType;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -166,6 +168,17 @@ public class AssetService {
         response.put("Available", availableAssets);
 
         return response;
+    }
+
+    public List<AssetRoomBuildingResponse> getAssetDetailsRB(Long buildingId, Long roomId) {
+        List<Asset> assets = assetRepository.findByBuildingIdAndRoomId(buildingId, roomId);
+
+        Map<AssetType, List<Asset>> groupedAssets = assets.stream()
+                .collect(Collectors.groupingBy(Asset::getAssetType));
+
+        return groupedAssets.entrySet().stream()
+                .map(entry -> new AssetRoomBuildingResponse(entry.getKey(), entry.getValue().size(), entry.getValue()))
+                .collect(Collectors.toList());
     }
 
     public Object getAssetsInRoom(Long buildingId, Long roomId, AssetType assetType) {
