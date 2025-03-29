@@ -254,7 +254,7 @@ export default function AddAssetModal({ isOpen, onClose, id, res }) {
     return (
         <div className="absolute mx-auto mt-[50px] inset-0 w-fit h-fit flex items-center justify-center z-10 rounded-[30px]">
             <div className="bg-white p-6 rounded-lg shadow-lg w-96">
-                <h2 className="text-xl font-bold text-center mb-4">Add Asset</h2>
+                <h2 className="text-[32px] font-bold text-center text-blue-500 mb-4">ADD ASSET</h2>
                 <form onSubmit={handleSubmit} className="space-y-4 w-[300px] flex flex-col m-auto">
                     <select name="assetType" value={form.assetType} onChange={handleChange} className="w-full p-2 border  rounded-[30px]" required>
                         {typelist?.map((item) => (
@@ -273,8 +273,8 @@ export default function AddAssetModal({ isOpen, onClose, id, res }) {
                     <input type="number" name="originalValue" value={form.originalValue} onChange={handleChange} placeholder="Original Value" className="w-full p-2 border  rounded-[30px]" required />
                     <input type="number" name="depreciationRate" value={form.depreciationRate} onChange={handleChange} placeholder="Depreciation Rate (%)" className="w-full p-2 border  rounded-[30px]" required />
                     <div className="flex justify-end space-x-2 mt-4">
-                        <button type="button" onClick={onClose} className="px-4 py-2 bg-gray-300  rounded-[30px]">Đóng</button>
-                        <button type="submit" className="px-4 py-2 bg-blue-500 text-white  rounded-[30px]">Lưu</button>
+                        <button type="button" onClick={onClose} className="px-4 py-2 bg-gray-300  rounded-[30px]">Close</button>
+                        <button type="submit" className="px-4 py-2 bg-blue-500 text-white  rounded-[30px]">Add</button>
                     </div>
                 </form>
             </div>
