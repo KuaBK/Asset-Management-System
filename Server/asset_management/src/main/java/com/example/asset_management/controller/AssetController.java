@@ -104,4 +104,9 @@ public class AssetController {
         }
         return ResponseEntity.ok(new ApiResponse<>(200, "Get list Detail successfully", details));
     }
+
+    @GetMapping("/types")
+    public List<AssetType> getAssetTypes() {
+        return Arrays.asList(AssetType.values());
+    }
 }

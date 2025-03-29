@@ -121,6 +121,45 @@ public class CheckService {
         }
     }
 
+    public void checkAssets(String email) {
+        assetService.updateResidualValues();
+
+        List<Asset> expiredAssets = assetRepository.findByExpireDateBefore(LocalDate.now());
+        List<Asset> deterioratingAssets = getLowValueAssets();
+
+        if (deterioratingAssets.isEmpty()) {
+            return;
+        }
+        if (expiredAssets.isEmpty()) {
+            return;
+        }
+
+        List<Asset> sellableAssets = expiredAssets.stream()
+                .filter(asset -> asset.getResidualValue() > 0)
+                .toList();
+
+        List<Asset> discardAssets = expiredAssets.stream()
+                .filter(asset -> asset.getResidualValue() <= 0)
+                .toList();
+
+        byte[] deterFile = generateExcelReport(deterioratingAssets, "Danh sách tài sản xuống cấp");
+        sendEmailWithAttachment(email, "Cảnh báo tài sản xuống cấp",
+                    "Đính kèm danh sách tài sản có giá trị còn lại dưới 30%.", deterFile, "deteriorating_Assets.xlsx");
+
+
+        if (!sellableAssets.isEmpty()) {
+            byte[] sellExcel = generateExcelReport(sellableAssets, "Danh sách tài sản thanh lý");
+            sendEmailWithAttachment(email, "Danh sách tài sản thanh lý",
+                    "Đính kèm danh sách tài sản có thể thanh lý.", sellExcel, "Sellable_Assets.xlsx");
+        }
+
+        if (!discardAssets.isEmpty()) {
+            byte[] discardExcel = generateExcelReport(discardAssets, "Danh sách tài sản vứt bỏ");
+            sendEmailWithAttachment(email, "Danh sách tài sản vứt bỏ",
+                    "Đính kèm danh sách tài sản cần vứt bỏ.", discardExcel, "Discard_Assets.xlsx");
+        }
+    }
+
     @Scheduled(cron = "0 0 0 1 1 *")
     public void checkAssets() {
         assetService.updateResidualValues();
@@ -145,7 +184,7 @@ public class CheckService {
 
         byte[] deterFile = generateExcelReport(deterioratingAssets, "Danh sách tài sản xuống cấp");
         sendEmailWithAttachment(HOST_EMAIL, "Cảnh báo tài sản xuống cấp",
-                    "Đính kèm danh sách tài sản có giá trị còn lại dưới 30%.", deterFile, "deteriorating_Assets.xlsx");
+                "Đính kèm danh sách tài sản có giá trị còn lại dưới 30%.", deterFile, "deteriorating_Assets.xlsx");
 
 
         if (!sellableAssets.isEmpty()) {

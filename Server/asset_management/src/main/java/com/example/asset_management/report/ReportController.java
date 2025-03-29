@@ -77,8 +77,8 @@ public class ReportController {
     }
 
     @GetMapping("/check")
-    public ResponseEntity<String> checkDepreciation() {
-        checkService.checkAssets();
+    public ResponseEntity<String> checkDepreciation(@RequestParam String email) {
+        checkService.checkAssets(email);
         return ResponseEntity.ok("Depreciation check completed, notifications sent if needed.");
     }
 }
