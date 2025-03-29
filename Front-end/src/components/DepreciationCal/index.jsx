@@ -12,6 +12,7 @@ const DepreciationCal = () => {
   const [showModalCheck, setShowModalCheck] = useState(false);
   const [showModalEmail, setShowModalEmail] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [downloadLink, setDownloadLink] = useState("");
   const token = localStorage.getItem("TOKEN");
 
@@ -86,7 +87,7 @@ const DepreciationCal = () => {
       alert("Please enter an email address.");
       return;
     }
-
+    setLoading(true); // Bắt đầu loading
     try {
       const response = await fetch(
         `http://localhost:8080/api/report/check?email=${email}`,
@@ -101,6 +102,8 @@ const DepreciationCal = () => {
       alert("Asset check report has been sent to your email.");
     } catch (error) {
       console.error("Error checking assets:", error);
+    } finally {
+      setLoading(false); // Kết thúc loading
     }
   };
 
@@ -109,11 +112,12 @@ const DepreciationCal = () => {
       alert("Please enter an email address.");
       return;
     }
+    setLoading(true); // Bắt đầu loading
     try {
       const response = await fetch(
         `http://localhost:8080/api/report/send?buildingId=${building}&roomId=${room}&assetType=${type}&email=${email}`,
         {
-          method: "GET",
+          method: "POST",
           headers: { Authorization: `Bearer ${token}` },
         }
       );
@@ -121,6 +125,8 @@ const DepreciationCal = () => {
       alert("Report has been sent to " + email);
     } catch (error) {
       console.error("Error sending report:", error);
+    } finally {
+      setLoading(false); // Kết thúc loading
     }
   };
 
@@ -172,7 +178,7 @@ const DepreciationCal = () => {
             setType("");
             setShowModalCheck(true);
           }}
-          className="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600"
+          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-green-600"
         >
           Check Assets
         </button>
@@ -184,7 +190,7 @@ const DepreciationCal = () => {
             setType("");
             setShowModalEmail(true);
           }}
-          className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-green-600"
         >
           Get Report by Email
         </button>
@@ -196,7 +202,7 @@ const DepreciationCal = () => {
             setType("");
             setShowModal(true);
           }}
-          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-green-600"
         >
           Download Excel Report
         </button>
@@ -230,6 +236,11 @@ const DepreciationCal = () => {
                 <br /> 3. List of assets past estimated lifespan with &lt; 10 USD
               </p>
             </div>
+            {loading && (
+              <p className="text-center text-blue-600 font-semibold mt-4">
+                Please wait, sending email...
+              </p>
+            )}
             <div className="mt-6 flex justify-end gap-4">
               <button
                 onClick={() => setShowModalCheck(false)}
@@ -310,6 +321,11 @@ const DepreciationCal = () => {
                 ))}
               </select>
             </div>
+            {loading && (
+              <p className="text-center text-blue-600 font-semibold mt-4">
+                Please wait, sending email...
+              </p>
+            )}  
             <div className="mt-4 flex justify-end gap-2">
               <button
                 onClick={() => setShowModal(false)}
@@ -461,7 +477,7 @@ const DepreciationCal = () => {
                 </td>
                 <td className="border border-blue-400 px-4 py-2 text-center">
                   <button
-                    className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600"
+                    className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-green-600"
                     onClick={() => fetchAssetDetail(item.assetType)}
                   >
                     Detail

@@ -13,6 +13,7 @@ const ForgotPassword = () => {
     const [newPassword, setNewPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [isOtpModalOpen, setOtpModalOpen] = useState(false);
+    const [isResetModalOpen, setResetModalOpen] = useState(false);
     var token = localStorage.getItem("TOKEN");
 
     const handleForgotPassword = async () => {
@@ -43,14 +44,19 @@ const ForgotPassword = () => {
 
     const handleConfirmOtp = async () => {
         try {
-            const response = await fetch(`http://localhost:8080/api/account/confirm-otp?email=${email}&otp=${otp}`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-            });
+            const response = await fetch(
+                `http://localhost:8080/api/account/confirm-otp?email=${email}&otp=${otp}`,
+                {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                }
+            );
             if (!response.ok) throw new Error("Invalid OTP!");
+
             Swal.fire({ icon: "success", title: "Success", text: "OTP Verified! Now reset your password." });
+
+            setOtpModalOpen(false); 
+            setResetModalOpen(true);
         } catch (error) {
             Swal.fire({ icon: "error", title: "Error", text: error.message });
         }
@@ -126,8 +132,15 @@ const ForgotPassword = () => {
                 >
                     Verify OTP
                 </button>
+            </Modal>
 
-                <h3 className="text-3xl font-bold text-[#5BA1F2] text-center mt-4">Reset Password</h3>
+            {/* Reset Password Modal */}
+            <Modal
+                isOpen={isResetModalOpen}
+                onRequestClose={() => setResetModalOpen(false)}
+                className="relative flex flex-col gap-4 max-w-md w-full h-auto rounded-xl bg-clip-border text-gray-700 px-6 py-8 bg-[rgba(255,255,255,0.2)] backdrop-blur-md shadow-[0_0_30px_#5BA1F2] mx-auto mt-20"
+            >
+                <h3 className="text-3xl font-bold text-[#5BA1F2] text-center">Reset Password</h3>
                 <input
                     type="password"
                     value={newPassword}

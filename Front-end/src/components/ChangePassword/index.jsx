@@ -89,9 +89,9 @@ const ChangePassword = () => {
 
     return (
         <div className="relative h-screen flex justify-center items-center" style={{ backgroundImage: `url(${hcmutbg})`, height: '100vh', width: '100vw', backgroundSize: 'cover' }}>
-            <div className="relative flex gap-[10px] w-120 h-110 flex-col rounded-xl bg-clip-border text-gray-700 py-[20px] bg-[rgba(255,255,255,0.13)] backdrop-blur-[5px] shadow-[0_0_40px_#5BA1F2]">
+            <div className="relative flex gap-[10px] w-120 h-125 flex-col rounded-xl bg-clip-border text-gray-700 py-[20px] bg-[rgba(255,255,255,0.13)] backdrop-blur-[5px] shadow-[0_0_40px_#5BA1F2]">
                 <h3 className="block font-sans text-3xl font-bold leading-snug tracking-normal text-[#5BA1F2] text-center antialiased">CHANGE PASSWORD</h3>
-                <div className="flex flex-col gap-[20px] p-6">
+                <div className="flex flex-col gap-[20px] p-5">
                     <div className="relative h-11 w-full min-w-[200px]">
                         <input
                             type={showOldPW ? 'text' : 'password'}
@@ -123,7 +123,7 @@ const ChangePassword = () => {
                         <img src={showConfirmPW ? eyeBlind : eye} onClick={() => setShowConfirmPW(!showConfirmPW)} className='absolute top-1.5 right-2 cursor-pointer' alt="Toggle Password" />
                     </div>
                 </div>
-                <div className="flex flex-col items-center gap-3 m-3">
+                <div className="flex flex-col items-center gap-3 p-5">
                     <div className="flex items-center justify-between bg-gray-200 rounded-md px-4 py-2 w-full">
                         <span className="font-mono text-xl font-bold tracking-widest text-gray-800 select-none">{captcha}</span>
                         <button
@@ -141,8 +141,6 @@ const ChangePassword = () => {
                         placeholder="Enter CAPTCHA"
                         className="w-full rounded-md border px-3 py-2 text-center text-lg font-semibold tracking-wider"
                     />
-                </div>
-                <div className="p-6 pt-0">
                     <button onClick={handleChangePassword} className="block w-full rounded-lg bg-gradient-to-tr from-[#21107a] to-[#5BA1F2] py-3 px-6 text-center font-sans text-[16px] font-bold uppercase text-white shadow-md shadow-[#21107a] transition-all hover:shadow-lg hover:shadow-[#5BA1F2] active:opacity-[0.85]">
                         Change Password
                     </button>
