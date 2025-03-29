@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface AssetRepository extends JpaRepository<Asset, Long> {
@@ -55,4 +56,6 @@ public interface AssetRepository extends JpaRepository<Asset, Long> {
     List<Asset> findByResidualValueLessThan(Double threshold);
 
     List<Asset> findByExpireDateBefore(LocalDate localDate);
+
+    Optional<Asset> findBySeries(String series);
 }

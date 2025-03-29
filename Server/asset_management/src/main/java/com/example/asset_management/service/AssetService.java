@@ -211,8 +211,8 @@ public class AssetService {
         return response;
     }
 
-    public Asset toggleBrokenStatus(Long id) {
-        return assetRepository.findById(id)
+    public Asset toggleBrokenStatus(String series) {
+        return assetRepository.findBySeries(series)
                 .map(asset -> {
                     asset.setIsBroken(!asset.getIsBroken());
                     assetRepository.save(asset);

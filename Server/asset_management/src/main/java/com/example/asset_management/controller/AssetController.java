@@ -85,9 +85,9 @@ public class AssetController {
         return result instanceof String ? ResponseEntity.badRequest().body(result) : ResponseEntity.ok(result);
     }
 
-    @PatchMapping("/{id}/toggle-broken")
-    public ResponseEntity<Asset> toggleBrokenStatus(@PathVariable Long id) {
-        Asset asset = assetService.toggleBrokenStatus(id);
+    @PatchMapping("/toggle-broken")
+    public ResponseEntity<Asset> toggleBrokenStatus(@RequestParam String series) {
+        Asset asset = assetService.toggleBrokenStatus(series);
         return asset != null ? ResponseEntity.ok(asset) : ResponseEntity.notFound().build();
     }
 
