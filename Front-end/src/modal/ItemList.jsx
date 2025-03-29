@@ -1,78 +1,79 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import images from '../assets/images.jpg'
 
-const items = [
-  {
-    id: 1,
-    name: "Bàn",
-    category: "Nội thất",
-    quantity: 10,
-    image: "https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
-    details: Array(10)
-      .fill(null)
-      .map((_, index) => ({
-        id: `BAN${index + 1}`,
-        type: "Bàn học sinh",
-        description: "Bàn học sinh tiêu chuẩn",
-        dimensions: "120cm x 60cm x 75cm",
-        purchaseDate: "2023-01-15",
-        expiryDate: "2025-01-15",
-      })),
-  },
-  {
-    id: 2,
-    name: "Ghế",
-    category: "Nội thất",
-    quantity: 20,
-    image: "https://images.unsplash.com/photo-1503602642455-232c88918244?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
-    details: Array(20)
-      .fill(null)
-      .map((_, index) => ({
-        id: `GHE${index + 1}`,
-        type: "Ghế xoay",
-        description: "Ghế xoay văn phòng",
-        dimensions: "50cm x 50cm x 120cm",
-        purchaseDate: "2023-02-20",
-        expiryDate: "2025-02-20",
-      })),
-  },
-  {
-    id: 3,
-    name: "Bàn ghế",
-    category: "Nội thất",
-    quantity: 5,
-    image: "https://images.unsplash.com/photo-1497366216548-37526070297c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
-    details: Array(5)
-      .fill(null)
-      .map((_, index) => ({
-        id: `BANGHE${index + 1}`,
-        type: "Bộ bàn ghế họp",
-        description: "Bộ bàn ghế phòng họp",
-        dimensions: "200cm x 80cm x 75cm",
-        purchaseDate: "2023-03-10",
-        expiryDate: "2025-03-10",
-      })),
-  },
-  {
-    id: 4,
-    name: "Máy chiếu",
-    category: "Thiết bị điện tử",
-    quantity: 3,
-    image: "https://images.unsplash.com/photo-1587829741301-dc798b83add3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
-    details: Array(3)
-      .fill(null)
-      .map((_, index) => ({
-        id: `MAYCHIEU${index + 1}`,
-        type: "Máy chiếu Full HD",
-        description: "Máy chiếu phòng học",
-        dimensions: "30cm x 25cm x 15cm",
-        purchaseDate: "2023-04-05",
-        expiryDate: "2025-04-05",
-      })),
-  },
-];
-
-const ItemList = ({ onClose }) => {
+const ItemList = ({ onClose, buildingId, roomId }) => {
+  const [items, setItems] = useState([]);
   const [expandedItem, setExpandedItem] = useState(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  // Hàm lấy hình ảnh tương ứng với assetType
+  const getAssetImage = (assetType) => {
+    const assetImages = {
+      CEILING_FAN: {images},
+      BLACK_BOARD: {images},
+      PROJECTOR: {images},
+      STUDENT_DESK: {images},
+      TEACHER_CHAIR: {images},
+      ELECTRIC_LIGHT: {images},
+    };  
+    return assetImages[assetType] || "https://via.placeholder.com/150?text=Asset";
+  };
+
+  // Kiểm tra token khi component mount
+  useEffect(() => {
+    const token = localStorage.getItem("TOKEN");
+    if (token) {
+      fetch("http://localhost:8080/api/auth/introspect", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token }),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          setIsLoggedIn(data.result?.valid || false);
+        })
+        .catch(() => setIsLoggedIn(false));
+    } else {
+      setIsLoggedIn(false);
+    }
+  }, []);
+
+  // Fetch API lấy danh sách tài sản
+  // console.log(buildingId, roomId);
+  useEffect(() => {
+    if (!isLoggedIn || !buildingId || !roomId) return;
+    
+
+    const token = localStorage.getItem("TOKEN");
+    if (buildingId === 6) {buildingId = 4;}
+    fetch(`http://localhost:8080/api/asset/count/Room-Building?buildingId=${buildingId}&roomId=${buildingId + "" + roomId}`, {
+      
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        const transformed = data.map((assetCategory, index) => ({
+          id: index + 1,
+          name: assetCategory.assetType,
+          category: assetCategory.assetType,
+          quantity: assetCategory.totalCount,
+          image: getAssetImage(assetCategory.assetType),
+          details: assetCategory.assets.map((asset) => ({
+            id: asset.id,
+            type: asset.type,
+            description: asset.series,
+            dimensions: asset.building.name,
+            purchaseDate: asset.dateInSystem.join("-"),
+            expiryDate: asset.expireDate.join("-"),
+          })),
+        }));
+        setItems(transformed);
+      })
+      .catch((error) => console.error("Error fetching assets:", error));
+  }, [isLoggedIn, buildingId, roomId]);
 
   const toggleItem = (itemId) => {
     setExpandedItem(expandedItem === itemId ? null : itemId);
@@ -84,125 +85,53 @@ const ItemList = ({ onClose }) => {
         <div className="flex justify-between items-center p-6 border-b border-gray-100">
           <div>
             <h2 className="text-2xl font-bold text-gray-800">Danh Sách Đồ Vật</h2>
-            <p className="text-gray-500 mt-1">Quản lý và theo dõi tài sản</p>
+            <p className="text-gray-500 mt-1">
+              {isLoggedIn ? "Đã đăng nhập" : "Chưa đăng nhập"} - Quản lý và theo dõi tài sản
+            </p>
           </div>
-          <button
-            onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 transition-colors"
-          >
-            <svg
-              className="w-6 h-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
-              />
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 transition-colors">
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
         </div>
 
-        {/* Items List */}
+        {/* Danh sách tài sản */}
         <div className="flex-1 overflow-y-auto p-6">
           <div className="space-y-4">
             {items.map((item) => (
               <div key={item.id} className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-                <div
-                  onClick={() => toggleItem(item.id)}
-                  className="p-4 hover:bg-gray-50 cursor-pointer flex items-center justify-between transition-colors"
-                >
+                <div onClick={() => toggleItem(item.id)} className="p-4 hover:bg-gray-50 cursor-pointer flex items-center justify-between transition-colors">
                   <div className="flex items-center space-x-4">
-                    <div className="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0">
-                      <img
-                        src={item.image}
-                        alt={item.name}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
+                    <img src={item.image} alt={item.name} className="w-16 h-16 rounded-lg object-cover" />
                     <div>
                       <h3 className="font-semibold text-gray-800">{item.name}</h3>
                       <p className="text-sm text-gray-500">{item.category}</p>
                     </div>
                   </div>
                   <div className="flex items-center space-x-4">
-                    <span className="px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-sm font-medium">
-                      Số lượng: {item.quantity}
-                    </span>
-                    <svg
-                      className={`w-5 h-5 text-gray-400 transform transition-transform ${
-                        expandedItem === item.id ? "rotate-180" : ""
-                      }`}
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M19 9l-7 7-7-7"
-                      />
+                    <span className="px-3 py-1 bg-blue-50 text-blue-600 rounded-full text-sm font-medium">Số lượng: {item.quantity}</span>
+                    <svg className={`w-5 h-5 text-gray-400 transform transition-transform ${expandedItem === item.id ? "rotate-180" : ""}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                     </svg>
                   </div>
                 </div>
-
-                {/* Expanded Details */}
-                <div
-                  className={`transition-all duration-300 ease-in-out ${
-                    expandedItem === item.id
-                      ? "max-h-[60vh] opacity-100"
-                      : "max-h-0 opacity-0"
-                  } overflow-hidden`}
-                >
+                {expandedItem === item.id && (
                   <div className="p-4 bg-gray-50">
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 overflow-y-auto max-h-[55vh] pr-2">
-                      {item.details.map((detail, index) => (
-                        <div
-                          key={detail.id}
-                          className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow"
-                        >
-                          <div className="flex items-center space-x-3 mb-3">
-                            <div className="w-12 h-12 rounded-lg overflow-hidden flex-shrink-0">
-                              <img
-                                src={item.image}
-                                alt={`${item.name} ${index + 1}`}
-                                className="w-full h-full object-cover"
-                              />
-                            </div>
-                            <div>
-                              <h4 className="font-medium text-gray-800">
-                                {item.name} #{index + 1}
-                              </h4>
-                              <p className="text-sm text-gray-500">{detail.type}</p>
-                            </div>
-                          </div>
-                          <div className="space-y-2 text-sm">
-                            <div className="flex justify-between">
-                              <span className="text-gray-500">Mã:</span>
-                              <span className="font-medium">{detail.id}</span>
-                            </div>
-                            <div className="flex justify-between">
-                              <span className="text-gray-500">Kích thước:</span>
-                              <span className="font-medium">{detail.dimensions}</span>
-                            </div>
-                            <div className="flex justify-between">
-                              <span className="text-gray-500">Ngày mua:</span>
-                              <span className="font-medium">{detail.purchaseDate}</span>
-                            </div>
-                            <div className="flex justify-between">
-                              <span className="text-gray-500">Ngày hết hạn:</span>
-                              <span className="font-medium">{detail.expiryDate}</span>
-                            </div>
-                          </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {item.details.map((detail) => (
+                        <div key={detail.id} className="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+                          <h4 className="font-medium text-gray-800">{item.name} #{detail.id}</h4>
+                          <p className="text-sm text-gray-500">{detail.type}</p>
+                          <p>Mã: {detail.id}</p>
+                          <p>Kích thước: {detail.dimensions}</p>
+                          <p>Ngày mua: {detail.purchaseDate}</p>
+                          <p>Ngày hết hạn: {detail.expiryDate}</p>
                         </div>
                       ))}
                     </div>
                   </div>
-                </div>
+                )}
               </div>
             ))}
           </div>

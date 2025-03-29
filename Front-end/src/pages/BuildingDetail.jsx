@@ -14,6 +14,7 @@ const BuildingDetail = () => {
   const [isFaultyInputOpen, setIsFaultyInputOpen] = useState(false);
   const [faultyItems, setFaultyItems] = useState([]);
   const [selectedFloor, setSelectedFloor] = useState(1);
+  const [selectedRoom, setSelectedRoom] = useState(null);
   const [roomData, setRoomData] = useState([]);
   const [buildingData, setBuildingData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -92,6 +93,18 @@ const BuildingDetail = () => {
     }
   };
 
+  const convertID = (id) => {
+    switch (id) {
+        case "h1":
+            return 1;
+        case "h2":
+            return 2;
+        case "h3":
+            return 3;
+        case "h6":
+            return 4;
+    }
+}
   useEffect(() => {
     const fetchData = async () => {
       const isLoggedIn = await checkToken();
@@ -115,8 +128,12 @@ const BuildingDetail = () => {
 
         if (summaryData.code === 200) {
           // Convert id from "h1" to "1" for API call
-          const buildingId = id.replace('h', '');
+          let buildingId = id.replace('h', '');
+          if (buildingId === "6") {buildingId = "4";}
+          // console.log(buildingId);
           const currentBuilding = summaryData.result.find(building => building.id === parseInt(buildingId));
+          if (buildingId === "4") {buildingId = "6";}
+          console.log(buildingId, currentBuilding);
           if (currentBuilding) {
             setBuildingData(currentBuilding);
           } else {
@@ -125,7 +142,8 @@ const BuildingDetail = () => {
         }
 
         // Fetch room data with numeric ID
-        const roomResponse = await fetch(`http://localhost:8080/api/room/infor/${id.replace('h', '')}`, {
+        // const roomResponse = await fetch(`http://localhost:8080/api/room/infor/${id.replace('h', '')}`, {
+          const roomResponse = await fetch(`http://localhost:8080/api/room/infor/${convertID(id)}`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -341,13 +359,19 @@ const BuildingDetail = () => {
               </div>
               <div className="space-y-2">
                 <button
-                  onClick={() => setIsItemListOpen(true)}
+                  onClick={() => {
+                    setSelectedRoom(room);
+                    setIsItemListOpen(true);
+                  }}
                   className="w-full py-2 bg-gradient-to-r from-blue-50 to-blue-100 text-blue-600 rounded-lg hover:from-blue-100 hover:to-blue-200 transition-all duration-200 text-sm font-medium shadow-sm hover:shadow-md"
                 >
                   Xem danh sách thiết bị
                 </button>
                 <button
-                  onClick={() => setIsFaultyListOpen(true)}
+                  onClick={() => {
+                    setSelectedRoom(room);
+                    setIsFaultyListOpen(true);
+                  }}
                   className="w-full py-2 bg-gradient-to-r from-red-50 to-red-100 text-red-600 rounded-lg hover:from-red-100 hover:to-red-200 transition-all duration-200 text-sm font-medium shadow-sm hover:shadow-md"
                 >
                   {room.brokenAssets} thiết bị cần bảo trì
@@ -359,11 +383,17 @@ const BuildingDetail = () => {
       </div>
 
       {/* Modals */}
-      {isItemListOpen && <ItemList onClose={() => setIsItemListOpen(false)} />}
+      {isItemListOpen && (
+        <ItemList 
+          onClose={() => setIsItemListOpen(false)} 
+          buildingId={id.replace('h', '')}
+          roomId={selectedRoom?.roomName}
+        />
+      )}
       {isFaultyListOpen && (
         <ItemFaultyList
-          faultyItems={faultyItems}
-          onRemove={removeFaultyItem}
+          buildingId={id.replace('h', '')}
+          roomId={selectedRoom?.roomName}
           onClose={() => setIsFaultyListOpen(false)}
         />
       )}
