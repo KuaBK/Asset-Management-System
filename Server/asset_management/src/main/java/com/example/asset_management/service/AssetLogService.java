@@ -21,7 +21,7 @@ public class AssetLogService {
     private final JwtUtils jwtUtils;
 
     public List<AssetLog> getAllLogs() {
-        return assetLogRepository.findAll();
+        return assetLogRepository.findAllByOrderByTimestampDesc();
     }
 
     public void saveLog(String action, AssetType assetType, String series, AssetLogType type) {
