@@ -3,8 +3,11 @@ import { useParams } from "react-router-dom";
 import ItemList from "../modal/ItemList";
 import ItemFaultyList from "../modal/ItemFaultyList";
 import InputFaulty from "../modal/InputFaulty";
+import AddAssetModal from "../components/AddAsset";
+
 
 const BuildingDetail = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const { id } = useParams();
   const [isItemListOpen, setIsItemListOpen] = useState(false);
   const [isFaultyListOpen, setIsFaultyListOpen] = useState(false);
@@ -19,7 +22,7 @@ const BuildingDetail = () => {
   const checkToken = async () => {
     const token = localStorage.getItem('TOKEN');
     const refreshToken = localStorage.getItem('REFRESH_TOKEN');
-    
+
     if (!token) {
       return false;
     }
@@ -34,7 +37,7 @@ const BuildingDetail = () => {
       });
 
       const data = await response.json();
-      
+
       // If token is invalid and we have a refresh token, try to refresh
       if (data.code !== 200 && refreshToken) {
         const newToken = await refreshTokenIfNeeded();
@@ -42,7 +45,7 @@ const BuildingDetail = () => {
           return true;
         }
       }
-      
+
       return data.code === 200;
     } catch (error) {
       console.error('Token validation error:', error);
@@ -59,7 +62,7 @@ const BuildingDetail = () => {
 
   const refreshTokenIfNeeded = async () => {
     const refreshToken = localStorage.getItem('REFRESH_TOKEN');
-    
+
     if (!refreshToken) {
       return null;
     }
@@ -74,14 +77,14 @@ const BuildingDetail = () => {
       });
 
       const data = await response.json();
-      
+
       if (data.code === 200 && data.result) {
         // Update stored tokens
         localStorage.setItem('TOKEN', data.result.token);
         localStorage.setItem('REFRESH_TOKEN', data.result.refreshToken);
         return data.result.token;
       }
-      
+
       return null;
     } catch (error) {
       console.error('Token refresh error:', error);
@@ -101,7 +104,7 @@ const BuildingDetail = () => {
       try {
         setLoading(true);
         const token = localStorage.getItem('TOKEN');
-        
+
         // Fetch building assets summary
         const summaryResponse = await fetch('http://localhost:8080/api/buildings/assets-summary', {
           headers: {
@@ -109,7 +112,7 @@ const BuildingDetail = () => {
           }
         });
         const summaryData = await summaryResponse.json();
-        
+
         if (summaryData.code === 200) {
           // Convert id from "h1" to "1" for API call
           const buildingId = id.replace('h', '');
@@ -128,9 +131,10 @@ const BuildingDetail = () => {
           }
         });
         const roomData = await roomResponse.json();
-        
+
         if (roomData.code === 200) {
           setRoomData(roomData.result);
+          console.log(roomData.result);
         } else {
           setError(roomData.message || 'Failed to fetch room data');
         }
@@ -162,7 +166,7 @@ const BuildingDetail = () => {
     setFaultyItems(faultyItems.filter((item) => item !== code));
   };
 
-  const filteredRooms = roomData.filter(room => 
+  const filteredRooms = roomData.filter(room =>
     room.roomName.startsWith(selectedFloor.toString())
   );
 
@@ -191,7 +195,8 @@ const BuildingDetail = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-6">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-6 relative">
+            <AddAssetModal className="z-100000" isOpen={isModalOpen} onClose={() => setIsModalOpen(false) } id={id} res={roomData} />
       {/* Building Header */}
       <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-md p-6 mb-6 transform hover:scale-[1.01] transition-all duration-300 border border-gray-100">
         <div className="flex justify-between items-center">
@@ -208,6 +213,13 @@ const BuildingDetail = () => {
               <p className="text-xs text-gray-600">Tổng tài sản</p>
               <p className="text-2xl font-bold text-green-600">{buildingData.assets.totalQuan}</p>
             </div>
+            <button 
+              onClick={() => setIsModalOpen(true)}
+              href="#"
+              className="inline-block w-full h-[44px] sm:w-auto py-3 px-5 mb-2 text-center font-semibold hover:shadow-md translate-y-1 hover:scale-105 leading-6 text-blue-50 bg-green-500 hover:bg-green-600 rounded-lg transition duration-200"
+            >Add
+            </button>
+
             <button
               className="px-6 py-3 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-xl transition-all duration-200 flex items-center space-x-2 shadow-sm hover:shadow-md hover:scale-105"
               onClick={() => setIsFaultyInputOpen(true)}
@@ -280,11 +292,10 @@ const BuildingDetail = () => {
             <button
               key={floor}
               onClick={() => setSelectedFloor(floor)}
-              className={`px-4 py-2 rounded-lg transition-all duration-300 transform hover:scale-105 ${
-                selectedFloor === floor
-                  ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-sm"
-                  : "bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-100"
-              }`}
+              className={`px-4 py-2 rounded-lg transition-all duration-300 transform hover:scale-105 ${selectedFloor === floor
+                ? "bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-sm"
+                : "bg-gray-50 text-gray-600 hover:bg-gray-100 border border-gray-100"
+                }`}
             >
               <span className="font-medium text-sm">Tầng {floor}</span>
             </button>

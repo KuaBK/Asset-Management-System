@@ -1,4 +1,4 @@
-import { useState } from "react";
+// import { useState } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 // import "./App.css";
 import Login from "./components/Login";
@@ -9,6 +9,7 @@ import DepreciationCal from "./components/DepreciationCal";
 import History from "./components/History";
 import ChangePassword from "./components/ChangePassword";
 import ForgotPassword from "./components/ForgotPassword";
+import AddAssetModal from "./components/AddAsset";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/login" element={<Login />} />
+        {/* <Route path="/add" element={<AddAssetModal isOpen={true} onClose={false} />} /> */}
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/home" element={<Home />}>
           <Route index element={<Navigate to="/home/overview" replace />} />
