@@ -14,7 +14,6 @@ const ForgotPassword = () => {
     const [confirmPassword, setConfirmPassword] = useState("");
     const [isOtpModalOpen, setOtpModalOpen] = useState(false);
     const [isResetModalOpen, setResetModalOpen] = useState(false);
-    var token = localStorage.getItem("TOKEN");
 
     const handleForgotPassword = async () => {
         if (!email) {
@@ -55,7 +54,7 @@ const ForgotPassword = () => {
 
             Swal.fire({ icon: "success", title: "Success", text: "OTP Verified! Now reset your password." });
 
-            setOtpModalOpen(false); 
+            setOtpModalOpen(false);
             setResetModalOpen(true);
         } catch (error) {
             Swal.fire({ icon: "error", title: "Error", text: error.message });
@@ -99,7 +98,7 @@ const ForgotPassword = () => {
 
                 <button
                     onClick={handleForgotPassword}
-                    className="w-full bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600 transition"
+                    className="block w-full select-none rounded-lg bg-gradient-to-tr from-[#21107a] to-[#5BA1F2] py-3 px-6 text-center align-middle font-sans text-[16px] font-bold uppercase text-white shadow-md shadow-[#21107a] transition-all hover:shadow-lg hover:shadow-[#5BA1F2] active:opacity-[0.85] disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
                 >
                     Send OTP
                 </button>
@@ -116,51 +115,55 @@ const ForgotPassword = () => {
             <Modal
                 isOpen={isOtpModalOpen}
                 onRequestClose={() => setOtpModalOpen(false)}
-                className="relative flex flex-col gap-4 max-w-md w-full h-auto rounded-xl bg-clip-border text-gray-700 px-6 py-8 bg-[rgba(255,255,255,0.2)] backdrop-blur-md shadow-[0_0_30px_#5BA1F2] mx-auto mt-20"
+                className="fixed inset-0 flex items-center justify-center z-50"
             >
-                <h3 className="text-3xl font-bold text-[#5BA1F2] text-center">Enter OTP</h3>
-                <input
-                    type="text"
-                    value={otp}
-                    onChange={(e) => setOtp(e.target.value)}
-                    placeholder="Enter OTP"
-                    className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-                />
-                <button
-                    onClick={handleConfirmOtp}
-                    className="w-full bg-green-500 text-white p-2 rounded-md hover:bg-green-600 transition"
-                >
-                    Verify OTP
-                </button>
+                <div className="relative flex flex-col gap-4 max-w-md w-full h-auto rounded-xl bg-clip-border text-gray-700 px-6 py-8 bg-[rgba(255,255,255,0.2)] backdrop-blur-md shadow-[0_0_30px_#5BA1F2]">
+                    <h3 className="text-3xl font-bold text-[#5BA1F2] text-center">Enter OTP</h3>
+                    <input
+                        type="text"
+                        value={otp}
+                        onChange={(e) => setOtp(e.target.value)}
+                        placeholder="Enter OTP"
+                        className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    />
+                    <button
+                        onClick={handleConfirmOtp}
+                        className="block w-full select-none rounded-lg bg-gradient-to-tr from-[#21107a] to-[#5BA1F2] py-3 px-6 text-center align-middle font-sans text-[16px] font-bold uppercase text-white shadow-md shadow-[#21107a] transition-all hover:shadow-lg hover:shadow-[#5BA1F2] active:opacity-[0.85] disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+                    >
+                        Verify OTP
+                    </button>
+                </div>
             </Modal>
 
             {/* Reset Password Modal */}
             <Modal
                 isOpen={isResetModalOpen}
                 onRequestClose={() => setResetModalOpen(false)}
-                className="relative flex flex-col gap-4 max-w-md w-full h-auto rounded-xl bg-clip-border text-gray-700 px-6 py-8 bg-[rgba(255,255,255,0.2)] backdrop-blur-md shadow-[0_0_30px_#5BA1F2] mx-auto mt-20"
+                className="fixed inset-0 flex items-center justify-center z-50"
             >
-                <h3 className="text-3xl font-bold text-[#5BA1F2] text-center">Reset Password</h3>
-                <input
-                    type="password"
-                    value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
-                    placeholder="New Password"
-                    className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-                />
-                <input
-                    type="password"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    placeholder="Confirm Password"
-                    className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-                />
-                <button
-                    onClick={handleResetPassword}
-                    className="w-full bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600 transition"
-                >
-                    Reset Password
-                </button>
+                <div className="relative flex flex-col gap-4 max-w-md w-full h-auto rounded-xl bg-clip-border text-gray-700 px-6 py-8 bg-[rgba(255,255,255,0.2)] backdrop-blur-md shadow-[0_0_30px_#5BA1F2]">
+                    <h3 className="text-3xl font-bold text-[#5BA1F2] text-center">Reset Password</h3>
+                    <input
+                        type="password"
+                        value={newPassword}
+                        onChange={(e) => setNewPassword(e.target.value)}
+                        placeholder="New Password"
+                        className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    />
+                    <input
+                        type="password"
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        placeholder="Confirm Password"
+                        className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+                    />
+                    <button
+                        onClick={handleResetPassword}
+                        className="block w-full select-none rounded-lg bg-gradient-to-tr from-[#21107a] to-[#5BA1F2] py-3 px-6 text-center align-middle font-sans text-[16px] font-bold uppercase text-white shadow-md shadow-[#21107a] transition-all hover:shadow-lg hover:shadow-[#5BA1F2] active:opacity-[0.85] disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+                    >
+                        Reset Password
+                    </button>
+                </div>
             </Modal>
         </div>
     );

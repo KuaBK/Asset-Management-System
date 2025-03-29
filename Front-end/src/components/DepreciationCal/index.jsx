@@ -178,7 +178,7 @@ const DepreciationCal = () => {
             setType("");
             setShowModalCheck(true);
           }}
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-green-600"
+          className="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600"
         >
           Check Assets
         </button>
@@ -190,7 +190,7 @@ const DepreciationCal = () => {
             setType("");
             setShowModalEmail(true);
           }}
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-green-600"
+          className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
         >
           Get Report by Email
         </button>
@@ -202,7 +202,7 @@ const DepreciationCal = () => {
             setType("");
             setShowModal(true);
           }}
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-green-600"
+          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
         >
           Download Excel Report
         </button>
@@ -256,7 +256,7 @@ const DepreciationCal = () => {
                   }
                   handleCheckAssets();
                 }}
-                className="bg-green-500 text-white px-5 py-3 rounded-lg hover:bg-green-600 transition duration-300"
+                className="bg-blue-600 text-white px-5 py-3 rounded-lg hover:bg-green-600 transition duration-300"
               >
                 Submit
               </button>
@@ -341,7 +341,7 @@ const DepreciationCal = () => {
                   }
                   handleDownloadExcel();
                 }}
-                className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-green-600"
               >
                 Submit
               </button>
@@ -428,7 +428,7 @@ const DepreciationCal = () => {
                   }
                   handleGetReportByEmail();
                 }}
-                className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-green-600"
               >
                 Submit
               </button>
