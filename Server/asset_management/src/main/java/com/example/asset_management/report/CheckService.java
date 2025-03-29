@@ -139,7 +139,7 @@ public class CheckService {
                 .toList();
 
         List<Asset> discardAssets = expiredAssets.stream()
-                .filter(asset -> asset.getResidualValue() <= 0)
+                .filter(asset -> asset.getResidualValue() <= 10)
                 .toList();
 
         byte[] deterFile = generateExcelReport(deterioratingAssets, "Danh sách tài sản xuống cấp");
