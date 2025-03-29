@@ -1,12 +1,11 @@
 package com.example.asset_management.configuration;
 
-import com.cloudinary.Cloudinary;
-import com.cloudinary.utils.ObjectUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.Map;
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 
 @Configuration
 public class CloudinaryConfig {
@@ -29,4 +28,3 @@ public class CloudinaryConfig {
                 "secure", true));
     }
 }
-

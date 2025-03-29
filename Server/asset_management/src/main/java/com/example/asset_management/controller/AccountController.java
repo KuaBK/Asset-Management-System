@@ -3,15 +3,17 @@ package com.example.asset_management.controller;
 import java.util.List;
 import java.util.Optional;
 
+import jakarta.validation.Valid;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
 import com.example.asset_management.dto.request.account.AccountCreationRequest;
 import com.example.asset_management.dto.request.account.AccountUpdateRequest;
 import com.example.asset_management.dto.response.ApiResponse;
 import com.example.asset_management.dto.response.account.AccountResponse;
 import com.example.asset_management.service.AccountService;
-import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -95,10 +97,25 @@ public class AccountController {
                     .build();
             return new ResponseEntity<>(response, HttpStatus.OK);
         } else {
-            response = ApiResponse.<Void>builder()
-                    .message("Account not found")
-                    .build();
+            response = ApiResponse.<Void>builder().message("Account not found").build();
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
+    }
+
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<ApiResponse<String>> sendResetCode(@RequestParam String email) {
+        String message = accountService.sendResetCode(email);
+        return ResponseEntity.ok(new ApiResponse<>(200, message, null));
+    }
+
+    @PostMapping("/confirm-otp")
+    public ResponseEntity<ApiResponse<String>> confirmOtp(@RequestParam String otp, @RequestParam String email) {
+        return ResponseEntity.ok(accountService.confirmOTP(otp, email));
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<String> resetPassword(@RequestParam String email, @RequestParam String newPassword, @RequestParam String confirmPassword) {
+        return ResponseEntity.ok(accountService.resetPassword(email, newPassword, confirmPassword));
     }
 }

@@ -1,11 +1,13 @@
 package com.example.asset_management.entity.building;
 
+import java.util.List;
+
+import jakarta.persistence.*;
+
 import com.example.asset_management.entity.room.Room;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import jakarta.persistence.*;
-import lombok.*;
 
-import java.util.List;
+import lombok.*;
 
 @Entity
 @Table(name = "buildings")

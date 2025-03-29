@@ -1,19 +1,20 @@
 package com.example.asset_management.configuration;
 
-import com.example.asset_management.entity.account.Account;
-import com.example.asset_management.entity.account.Role;
-import com.example.asset_management.repository.AccountRepository;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.client.RestTemplate;
+
+import com.example.asset_management.entity.account.Account;
+import com.example.asset_management.entity.account.Role;
+import com.example.asset_management.repository.AccountRepository;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.client.RestTemplate;
 
 @Configuration
 @RequiredArgsConstructor
@@ -26,6 +27,7 @@ public class ApplicationInitConfig {
 
     static final String ADMIN_USER_NAME = "admin";
     static final String ADMIN_PASSWORD = "admin";
+    static final String ADMIN_EMAIL = "admin@gmail.com";
 
     @Bean
     @ConditionalOnProperty(
@@ -41,6 +43,7 @@ public class ApplicationInitConfig {
                         .username(ADMIN_USER_NAME)
                         .password(passwordEncoder.encode(ADMIN_PASSWORD))
                         .role(Role.ADMIN)
+                        .email(ADMIN_EMAIL)
                         .build();
 
                 accountRepository.save(admin);
