@@ -34,6 +34,7 @@ const History = () => {
     
                     const data = await response.json();
                     if (response.ok) {
+                        console.log(data);
                         setLog(data)
                     }
                     // console.log("Fetch success:", listCard);
@@ -54,11 +55,11 @@ const History = () => {
                         <div className="flex items-center gap-[10px] justify-between">
                             <div className="opacity-[60%]">{formatDateTime(list.timestamp).formattedTime}</div>
                             <img className='' src={fix} alt="" />
-                            <div className='w-[70%] '>
+                            <div className='w-[50%] '>
                                 <div className='text-[25px] truncate text-black  font-semibold'>{formatText(list.assetType)} - {list.assetSeries}</div>
                                 <div className='truncate opacity-70'>{list.action}</div>
                             </div>
-                            <div className='w-[10%] truncate'>{list.username}</div>
+                            <div className='w-[30%] truncate text-end'>{list.email}</div>
                         </div>
                     </div>
                 ))}
