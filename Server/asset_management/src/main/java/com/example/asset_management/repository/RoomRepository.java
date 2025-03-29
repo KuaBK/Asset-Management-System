@@ -1,11 +1,11 @@
 package com.example.asset_management.repository;
 
-import java.util.List;
-
+import com.example.asset_management.dto.response.room.RoomResponse;
+import com.example.asset_management.entity.room.Room;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.example.asset_management.entity.room.Room;
+import java.util.List;
 
 @Repository
 public interface RoomRepository extends JpaRepository<Room, Long> {
@@ -13,3 +13,4 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
 
     boolean existsByIdAndBuildingId(Long roomId, Long buildingId);
 }
+

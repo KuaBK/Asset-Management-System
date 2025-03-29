@@ -3,17 +3,16 @@ package com.example.asset_management.controller;
 import java.util.List;
 import java.util.Optional;
 
-import jakarta.validation.Valid;
-
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
 import com.example.asset_management.dto.request.account.AccountCreationRequest;
 import com.example.asset_management.dto.request.account.AccountUpdateRequest;
 import com.example.asset_management.dto.response.ApiResponse;
 import com.example.asset_management.dto.response.account.AccountResponse;
+import com.example.asset_management.repository.AccountRepository;
 import com.example.asset_management.service.AccountService;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class AccountController {
     private final AccountService accountService;
+    private final AccountRepository accountRepository;
 
     // Create Account
     @PostMapping
@@ -97,7 +97,9 @@ public class AccountController {
                     .build();
             return new ResponseEntity<>(response, HttpStatus.OK);
         } else {
-            response = ApiResponse.<Void>builder().message("Account not found").build();
+            response = ApiResponse.<Void>builder()
+                    .message("Account not found")
+                    .build();
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
     }
@@ -105,6 +107,9 @@ public class AccountController {
 
     @PostMapping("/forgot-password")
     public ResponseEntity<ApiResponse<String>> sendResetCode(@RequestParam String email) {
+        if(accountRepository.findByEmail(email).isEmpty()){
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
         String message = accountService.sendResetCode(email);
         return ResponseEntity.ok(new ApiResponse<>(200, message, null));
     }

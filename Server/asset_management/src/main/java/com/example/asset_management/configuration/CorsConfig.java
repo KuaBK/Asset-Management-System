@@ -13,15 +13,14 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 @Configuration
 @EnableWebMvc
-public class CorsConfig {
+public class CorsConfig  {
 
     @Bean
     public FilterRegistrationBean<CorsFilter> corsFilter() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
 
-        config.setAllowedOrigins(Arrays.asList(
-                "http://localhost:8080/api/chat.html", "http://localhost:8080/api", "http://localhost:5173"));
+        config.setAllowedOrigins(Arrays.asList("http://localhost:8080/api/chat.html", "http://localhost:8080/api", "http://localhost:5173"));
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         config.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "X-Requested-With"));
         config.setAllowCredentials(true);
@@ -32,3 +31,4 @@ public class CorsConfig {
         return bean;
     }
 }
+

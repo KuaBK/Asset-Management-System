@@ -6,6 +6,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 class AssetManagementApplicationTests {
 
-    @Test
-    void contextLoads() {}
+	@Test
+	void contextLoads() {
+	}
+
 }

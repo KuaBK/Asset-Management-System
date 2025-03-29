@@ -1,14 +1,16 @@
 package com.example.asset_management.report;
 
+import com.example.asset_management.entity.asset.AssetType;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.example.asset_management.entity.asset.AssetType;
-
-import lombok.RequiredArgsConstructor;
+import java.io.File;
+import java.nio.file.Files;
+import java.time.Year;
 
 @RestController
 @RequiredArgsConstructor
@@ -21,7 +23,9 @@ public class ReportController {
 
     @GetMapping("/export-excel")
     public ResponseEntity<?> exportExcel(
-            @RequestParam Long buildingId, @RequestParam Long roomId, @RequestParam AssetType assetType) {
+            @RequestParam Long buildingId,
+            @RequestParam Long roomId,
+            @RequestParam AssetType assetType) {
         try {
             String fileUrl = reportService.generateAndUploadExcel(buildingId, roomId, assetType);
             return ResponseEntity.ok(fileUrl);
@@ -33,8 +37,9 @@ public class ReportController {
     }
 
     @GetMapping("/download")
-    public ResponseEntity<byte[]> downloadReport(
-            @RequestParam Long buildingId, @RequestParam Long roomId, @RequestParam AssetType assetType) {
+    public ResponseEntity<byte[]> downloadReport(@RequestParam Long buildingId,
+                                                 @RequestParam Long roomId,
+                                                 @RequestParam AssetType assetType) {
         try {
 
             File reportFile = emailService.generateExcelReport(buildingId, roomId, assetType);
@@ -51,11 +56,11 @@ public class ReportController {
     }
 
     @PostMapping("/send")
-    public ResponseEntity<String> sendReport(
-            @RequestParam Long buildingId,
-            @RequestParam Long roomId,
-            @RequestParam AssetType assetType,
-            @RequestParam String email) {
+    public ResponseEntity<String> sendReport(@RequestParam Long buildingId,
+                                             @RequestParam Long roomId,
+                                             @RequestParam AssetType assetType,
+                                             @RequestParam String email)
+    {
         try {
             File reportFile = emailService.generateExcelReport(buildingId, roomId, assetType);
 
@@ -72,8 +77,8 @@ public class ReportController {
     }
 
     @GetMapping("/check")
-    public ResponseEntity<String> checkDepreciation() {
-        checkService.checkAssets();
+    public ResponseEntity<String> checkDepreciation(@RequestParam String email) {
+        checkService.checkAssets(email);
         return ResponseEntity.ok("Depreciation check completed, notifications sent if needed.");
     }
 }

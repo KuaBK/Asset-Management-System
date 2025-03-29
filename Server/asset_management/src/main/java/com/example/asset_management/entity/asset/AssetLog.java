@@ -1,12 +1,11 @@
 package com.example.asset_management.entity.asset;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.persistence.*;
+import lombok.*;
+
 import java.time.LocalDateTime;
 
-import jakarta.persistence.*;
-
-import com.fasterxml.jackson.annotation.JsonFormat;
-
-import lombok.*;
 
 @Entity
 @Getter
@@ -40,3 +39,4 @@ public class AssetLog {
     @Enumerated(EnumType.STRING)
     private AssetLogType type;
 }
+

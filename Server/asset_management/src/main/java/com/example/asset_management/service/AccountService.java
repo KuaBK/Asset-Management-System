@@ -5,13 +5,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
-import jakarta.transaction.Transactional;
-
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-
 import com.example.asset_management.dto.request.account.AccountCreationRequest;
 import com.example.asset_management.dto.request.account.AccountUpdateRequest;
 import com.example.asset_management.dto.response.ApiResponse;
@@ -21,6 +14,12 @@ import com.example.asset_management.entity.account.PasswordResetToken;
 import com.example.asset_management.entity.account.Role;
 import com.example.asset_management.repository.AccountRepository;
 import com.example.asset_management.repository.PasswordResetTokenRepository;
+import jakarta.transaction.Transactional;
+import jakarta.validation.constraints.Email;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -36,10 +35,12 @@ public class AccountService {
     private final PasswordResetTokenRepository tokenRepository;
     private final JavaMailSender mailSender;
 
+
     public AccountResponse createAccount(AccountCreationRequest accountRequest) {
         Account account = Account.builder()
                 .username(accountRequest.getUsername())
                 .role(Role.EMPLOYEE)
+                .email(accountRequest.getEmail())
                 .build();
         account.setPassword(passwordEncoder.encode(accountRequest.getPassword()));
         Account savedAccount = accountRepository.save(account);
@@ -61,13 +62,12 @@ public class AccountService {
         Optional<Account> accountOpt = accountRepository.findById(id);
         if (accountOpt.isPresent()) {
             Account account = accountOpt.get();
-            if (passwordEncoder.matches(accountRequest.getOldPassword(), account.getPassword())
-                    && accountRequest.getConfirmPassword().equals(accountRequest.getNewPassword())) {
+            if(passwordEncoder.matches(accountRequest.getOldPassword(), account.getPassword()) &&
+               accountRequest.getConfirmPassword().equals(accountRequest.getNewPassword())) {
 
                 account.setPassword(passwordEncoder.encode(accountRequest.getNewPassword()));
-            } else {
-                throw new RuntimeException("Mật khẩu cũ hoặc mật khẩu xác nhận không đúng");
             }
+            else {throw new RuntimeException("Mật khẩu cũ hoặc mật khẩu xác nhận không đúng");}
             Account updatedAccount = accountRepository.save(account);
             return mapToAccountResponse(updatedAccount);
         }
@@ -90,7 +90,7 @@ public class AccountService {
                 .build();
     }
 
-    public String sendResetCode(String email) {
+    public String sendResetCode(@Email String email) {
         Optional<Account> accountOpt = accountRepository.findByEmail(email);
         if (accountOpt.isEmpty()) {
             return "Email không tồn tại!";
@@ -116,7 +116,7 @@ public class AccountService {
         return "Mã OTP đã được gửi tới email.";
     }
 
-    public void sendEmail(String to, String subject, String text) {
+    public void sendEmail(@Email String to, String subject, String text) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(to);
         message.setSubject(subject);
@@ -124,7 +124,7 @@ public class AccountService {
         mailSender.send(message);
     }
 
-    public ApiResponse<String> confirmOTP(String otp, String email) {
+    public ApiResponse<String> confirmOTP(String otp, @Email String email){
         Optional<PasswordResetToken> tokenOpt = tokenRepository.findByEmailAndToken(email, otp);
         if (tokenOpt.isEmpty() || tokenOpt.get().getExpiryDate().isBefore(LocalDateTime.now())) {
             return new ApiResponse<>(400, "OTP không hợp lệ hoặc đã hết hạn", null);
@@ -133,21 +133,20 @@ public class AccountService {
     }
 
     @Transactional
-    public String resetPassword(String email, String newPassword, String confirmPassword) {
+    public String resetPassword(@Email String email, String newPassword, String confirmPassword) {
         Optional<Account> accountOpt = accountRepository.findByEmail(email);
         if (accountOpt.isEmpty()) {
             return "Email không tồn tại!";
         }
 
         Account account = accountOpt.get();
-        if (newPassword.equals(confirmPassword)) {
+        if(newPassword.equals(confirmPassword)) {
             account.setPassword(passwordEncoder.encode(newPassword));
             accountRepository.save(account);
             tokenRepository.deleteByEmail(email);
             return "Successful";
-        } else {
-            return "Password isn't match";
         }
+        else {return "Password isn't match";}
     }
 }
 // @PreAuthorize("hasRole('ADMIN')")

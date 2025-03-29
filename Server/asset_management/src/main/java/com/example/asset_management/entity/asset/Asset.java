@@ -1,13 +1,11 @@
 package com.example.asset_management.entity.asset;
 
-import java.time.LocalDate;
-
-import jakarta.persistence.*;
-
 import com.example.asset_management.entity.building.Building;
 import com.example.asset_management.entity.room.Room;
-
+import jakarta.persistence.*;
 import lombok.*;
+
+import java.time.LocalDate;
 
 @Entity
 @Getter
@@ -32,6 +30,9 @@ public class Asset {
     @JoinColumn(name = "room_id", nullable = false)
     private Room room;
 
+
+
+
     @Column(nullable = false, unique = true)
     private String series;
 
@@ -53,6 +54,8 @@ public class Asset {
     @Column(nullable = false)
     private Integer productYear;
 
+
+
     @Column(nullable = false)
     private LocalDate dateInSystem;
 
@@ -61,6 +64,8 @@ public class Asset {
 
     @Column(nullable = false)
     private Integer estimatedLife;
+
+
 
     @Column(nullable = false)
     private Double originalValue;

@@ -8,7 +8,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableScheduling
 public class AssetManagementApplication {
 
-    public static void main(String[] args) {
-        SpringApplication.run(AssetManagementApplication.class, args);
-    }
+	public static void main(String[] args) {
+		SpringApplication.run(AssetManagementApplication.class, args);
+	}
+
 }

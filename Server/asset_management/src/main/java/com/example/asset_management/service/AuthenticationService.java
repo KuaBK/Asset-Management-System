@@ -7,11 +7,6 @@ import java.util.Date;
 import java.util.StringJoiner;
 import java.util.UUID;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-
 import com.example.asset_management.dto.request.authentication.AuthenticationRequest;
 import com.example.asset_management.dto.request.authentication.IntrospectRequest;
 import com.example.asset_management.dto.request.authentication.LogOutRequest;
@@ -24,6 +19,11 @@ import com.example.asset_management.exception.AppException;
 import com.example.asset_management.exception.ErrorCode;
 import com.example.asset_management.repository.AccountRepository;
 import com.example.asset_management.repository.InvalidatedTokenRepository;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.MACVerifier;
@@ -115,8 +115,8 @@ public class AuthenticationService {
     private TokenInfo generateToken(Account account) {
         JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);
         Date issueTime = new Date();
-        Date expiryTime =
-                new Date(Instant.now().plus(validDuration, ChronoUnit.SECONDS).toEpochMilli());
+        Date expiryTime = new Date(
+                Instant.now().plus(validDuration, ChronoUnit.SECONDS).toEpochMilli());
 
         JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder()
                 .subject(account.getUsername())

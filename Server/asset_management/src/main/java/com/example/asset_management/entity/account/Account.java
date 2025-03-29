@@ -3,9 +3,9 @@ package com.example.asset_management.entity.account;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
+
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -24,9 +24,7 @@ public class Account {
 
     @NotNull(message = "Username cannot be null")
     @Size(min = 5, max = 50, message = "Username must be between 5 and 50 characters")
-    @Pattern(
-            regexp = "^[a-zA-Z0-9._-]+$",
-            message = "Username can only contain letters, numbers, dots, underscores, or hyphens")
+    @Pattern(regexp = "^[a-zA-Z0-9._-]+$", message = "Username can only contain letters, numbers, dots, underscores, or hyphens")
     @Column(name = "userName", unique = true, columnDefinition = "VARCHAR(255) COLLATE utf8mb4_unicode_ci")
     String username;
 

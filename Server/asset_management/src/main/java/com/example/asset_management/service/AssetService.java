@@ -1,43 +1,46 @@
 package com.example.asset_management.service;
 
-import java.time.LocalDate;
-import java.util.*;
-
-import org.springframework.stereotype.Service;
-
 import com.example.asset_management.dto.request.asset.AssetRequest;
 import com.example.asset_management.dto.response.asset.AssetDetailByTypeResponse;
 import com.example.asset_management.dto.response.asset.AssetResponse;
+import com.example.asset_management.dto.response.asset.AssetRoomBuildingResponse;
 import com.example.asset_management.dto.response.asset.AssetTotalSummaryResponse;
 import com.example.asset_management.entity.asset.AssetLogType;
 import com.example.asset_management.entity.asset.AssetType;
 import com.example.asset_management.entity.building.Building;
+import com.example.asset_management.entity.asset.Asset;
 import com.example.asset_management.entity.room.Room;
-import com.example.asset_management.repository.BuildingRepository;
-import com.example.asset_management.repository.RoomRepository;
+import com.example.asset_management.repository.*;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class AssetService {
+    private final AssetRepository assetRepository;
     private final BuildingRepository buildingRepository;
     private final RoomRepository roomRepository;
     private final AssetLogService assetLogService;
 
     public List<AssetResponse> getAllAsset() {
-        return assetRepository.findAll().stream().map(this::mapToDTO).toList();
+        return assetRepository.findAll().stream()
+                .map(this::mapToDTO)
+                .toList();
     }
 
     public Optional<AssetResponse> getAssetById(Long id) {
         return assetRepository.findById(id).map(this::mapToDTO);
     }
 
-    public AssetResponse addAsset(AssetRequest dto) {
-        Building building = buildingRepository
-                .findById(dto.getBuildingId())
+    public AssetResponse addAsset (AssetRequest dto) {
+        Building building = buildingRepository.findById(dto.getBuildingId())
                 .orElseThrow(() -> new IllegalArgumentException("Invalid building ID: " + dto.getBuildingId()));
 
-        Room room = roomRepository
-                .findById(dto.getRoomId())
+        Room room = roomRepository.findById(dto.getRoomId())
                 .orElseThrow(() -> new IllegalArgumentException("Invalid room ID: " + dto.getRoomId()));
 
         if (!room.getBuilding().getId().equals(building.getId())) {
@@ -53,18 +56,17 @@ public class AssetService {
         return mapToDTO(asset);
     }
 
-    public Optional<AssetResponse> updateAsset(Long id, AssetRequest dto) {
-        Building building = buildingRepository
-                .findById(dto.getBuildingId())
+    public Optional<AssetResponse> updateAsset (Long id, AssetRequest dto) {
+        Building building = buildingRepository.findById(dto.getBuildingId())
                 .orElseThrow(() -> new IllegalArgumentException("Invalid building ID: " + dto.getBuildingId()));
 
-        Room room = roomRepository
-                .findById(dto.getRoomId())
+        Room room = roomRepository.findById(dto.getRoomId())
                 .orElseThrow(() -> new IllegalArgumentException("Invalid room ID: " + dto.getRoomId()));
 
         if (!room.getBuilding().getId().equals(building.getId())) {
             throw new IllegalArgumentException("Room does not belong to the given building.");
         }
+
 
         return assetRepository.findById(id).map(existingAsset -> {
             existingAsset.setBuilding(building);
@@ -87,26 +89,24 @@ public class AssetService {
             existingAsset.setDepreciationRate(dto.getDepreciationRate());
 
             LocalDate currentDate = LocalDate.now();
-            int yearsUsed =
-                    currentDate.getYear() - existingAsset.getDateInSystem().getYear();
-            double newResidualValue =
-                    existingAsset.getOriginalValue() * Math.pow((1 - existingAsset.getDepreciationRate()), yearsUsed);
+            int yearsUsed = currentDate.getYear() - existingAsset.getDateInSystem().getYear();
+            double newResidualValue = existingAsset.getOriginalValue() *
+                    Math.pow((1 - existingAsset.getDepreciationRate()), yearsUsed);
             newResidualValue = Math.max(newResidualValue, 0);
             existingAsset.setResidualValue(newResidualValue);
 
             assetRepository.save(existingAsset);
-            assetLogService.saveLog(
-                    "Update asset", existingAsset.getAssetType(), existingAsset.getSeries(), AssetLogType.UPDATE);
+            assetLogService.saveLog("Update asset", existingAsset.getAssetType(), existingAsset.getSeries(), AssetLogType.UPDATE);
             return mapToDTO(existingAsset);
         });
     }
 
-    public boolean deleteAsset(Long id) {
+
+    public boolean deleteAsset (Long id) {
         if (assetRepository.existsById(id)) {
-            assetRepository
-                    .findById(id)
-                    .ifPresent(asset -> assetLogService.saveLog(
-                            "Delete asset", asset.getAssetType(), asset.getSeries(), AssetLogType.DELETE));
+            assetRepository.findById(id).ifPresent(asset ->
+                    assetLogService.saveLog("Delete asset", asset.getAssetType(), asset.getSeries(), AssetLogType.DELETE)
+            );
             assetRepository.deleteById(id);
             return true;
         }
@@ -119,7 +119,8 @@ public class AssetService {
 
         for (Asset asset : assets) {
             int yearsUsed = currentDate.getYear() - asset.getDateInSystem().getYear();
-            double newResidualValue = asset.getOriginalValue() * Math.pow((1 - asset.getDepreciationRate()), yearsUsed);
+            double newResidualValue = asset.getOriginalValue() *
+                    Math.pow((1 - asset.getDepreciationRate()), yearsUsed);
             newResidualValue = Math.max(newResidualValue, 0);
 
             asset.setResidualValue(newResidualValue);
@@ -132,6 +133,7 @@ public class AssetService {
         double depreciationFactor = Math.pow((1 - asset.getDepreciationRate()), yearsUsed);
         return Math.max(asset.getOriginalValue() * depreciationFactor, asset.getResidualValue());
     }
+
 
     private AssetResponse mapToDTO(Asset asset) {
         return AssetResponse.builder()
@@ -168,6 +170,17 @@ public class AssetService {
         return response;
     }
 
+    public List<AssetRoomBuildingResponse> getAssetDetailsRB(Long buildingId, Long roomId) {
+        List<Asset> assets = assetRepository.findByBuildingIdAndRoomId(buildingId, roomId);
+
+        Map<AssetType, List<Asset>> groupedAssets = assets.stream()
+                .collect(Collectors.groupingBy(Asset::getAssetType));
+
+        return groupedAssets.entrySet().stream()
+                .map(entry -> new AssetRoomBuildingResponse(entry.getKey(), entry.getValue().size(), entry.getValue()))
+                .collect(Collectors.toList());
+    }
+
     public Object getAssetsInRoom(Long buildingId, Long roomId, AssetType assetType) {
         if (!roomRepository.existsByIdAndBuildingId(roomId, buildingId)) {
             return "Room ID " + roomId + " không thuộc Building ID " + buildingId;
@@ -188,10 +201,8 @@ public class AssetService {
             return "Room ID " + roomId + " không thuộc Building ID " + buildingId;
         }
 
-        List<Asset> brokenAssets =
-                assetRepository.findByBuildingIdAndRoomIdAndAssetTypeAndIsBrokenTrue(buildingId, roomId, assetType);
-        Long totalBrokenAssets =
-                assetRepository.countBrokenAssetsByBuildingAndRoomAndType(buildingId, roomId, assetType);
+        List<Asset> brokenAssets = assetRepository.findByBuildingIdAndRoomIdAndAssetTypeAndIsBrokenTrue(buildingId, roomId, assetType);
+        Long totalBrokenAssets = assetRepository.countBrokenAssetsByBuildingAndRoomAndType(buildingId, roomId, assetType);
 
         Map<String, Object> response = new HashMap<>();
         response.put("ListBrokenAssets", brokenAssets);
@@ -200,14 +211,12 @@ public class AssetService {
         return response;
     }
 
-    public Asset toggleBrokenStatus(Long id) {
-        return assetRepository
-                .findById(id)
+    public Asset toggleBrokenStatus(String series) {
+        return assetRepository.findBySeries(series)
                 .map(asset -> {
                     asset.setIsBroken(!asset.getIsBroken());
                     assetRepository.save(asset);
-                    assetLogService.saveLog(
-                            "Toggle broken status asset", asset.getAssetType(), asset.getSeries(), AssetLogType.TOGGLE);
+                    assetLogService.saveLog("Toggle broken status asset", asset.getAssetType(), asset.getSeries(), AssetLogType.TOGGLE);
                     return asset;
                 })
                 .orElse(null);
@@ -219,8 +228,7 @@ public class AssetService {
                 .map(type -> {
                     List<Asset> assets = assetRepository.findByAssetType(type);
                     int totalCount = assets.size();
-                    double totalOriginalValue =
-                            assets.stream().mapToDouble(Asset::getOriginalValue).sum();
+                    double totalOriginalValue = assets.stream().mapToDouble(Asset::getOriginalValue).sum();
                     double totalCurrentValue = assets.stream()
                             .mapToDouble(asset -> calculateCurrentValue(asset, year))
                             .sum();
@@ -242,24 +250,24 @@ public class AssetService {
                         asset.getOriginalValue(),
                         calculateCurrentValue(asset, year),
                         asset.getDepreciationRate() * 100,
-                        year - asset.getDateInSystem().getYear()))
+                        year - asset.getDateInSystem().getYear()
+                ))
                 .toList();
     }
 
     private Asset mapToEntity(AssetRequest dto) {
-        Building building = buildingRepository
-                .findById(dto.getBuildingId())
+        Building building = buildingRepository.findById(dto.getBuildingId())
                 .orElseThrow(() -> new IllegalArgumentException("Invalid building ID"));
 
-        Room room = roomRepository
-                .findById(dto.getRoomId())
+        Room room = roomRepository.findById(dto.getRoomId())
                 .orElseThrow(() -> new IllegalArgumentException("Invalid room ID"));
 
         LocalDate expireDate = LocalDate.of(dto.getDateInSystem().getYear() + dto.getEstimatedLife(), 1, 1);
 
         LocalDate currentDate = LocalDate.now();
         int yearsUsed = currentDate.getYear() - dto.getDateInSystem().getYear();
-        double newResidualValue = dto.getOriginalValue() * Math.pow((1 - dto.getDepreciationRate()), yearsUsed);
+        double newResidualValue = dto.getOriginalValue() *
+                Math.pow((1 - dto.getDepreciationRate()), yearsUsed);
         newResidualValue = Math.max(newResidualValue, 0);
 
         return Asset.builder()
@@ -282,3 +290,4 @@ public class AssetService {
                 .build();
     }
 }
+

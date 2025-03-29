@@ -1,10 +1,8 @@
 package com.example.asset_management.dto.request.asset;
+import com.example.asset_management.entity.asset.AssetType;
+import lombok.*;
 
 import java.time.LocalDate;
-
-import com.example.asset_management.entity.asset.AssetType;
-
-import lombok.*;
 
 @Data
 @NoArgsConstructor
