@@ -15,6 +15,7 @@ import com.example.asset_management.entity.account.Role;
 import com.example.asset_management.repository.AccountRepository;
 import com.example.asset_management.repository.PasswordResetTokenRepository;
 import jakarta.transaction.Transactional;
+import jakarta.validation.constraints.Email;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -89,7 +90,7 @@ public class AccountService {
                 .build();
     }
 
-    public String sendResetCode(String email) {
+    public String sendResetCode(@Email String email) {
         Optional<Account> accountOpt = accountRepository.findByEmail(email);
         if (accountOpt.isEmpty()) {
             return "Email không tồn tại!";
@@ -115,7 +116,7 @@ public class AccountService {
         return "Mã OTP đã được gửi tới email.";
     }
 
-    public void sendEmail(String to, String subject, String text) {
+    public void sendEmail(@Email String to, String subject, String text) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(to);
         message.setSubject(subject);
@@ -123,7 +124,7 @@ public class AccountService {
         mailSender.send(message);
     }
 
-    public ApiResponse<String> confirmOTP(String otp, String email){
+    public ApiResponse<String> confirmOTP(String otp, @Email String email){
         Optional<PasswordResetToken> tokenOpt = tokenRepository.findByEmailAndToken(email, otp);
         if (tokenOpt.isEmpty() || tokenOpt.get().getExpiryDate().isBefore(LocalDateTime.now())) {
             return new ApiResponse<>(400, "OTP không hợp lệ hoặc đã hết hạn", null);
@@ -132,7 +133,7 @@ public class AccountService {
     }
 
     @Transactional
-    public String resetPassword(String email, String newPassword, String confirmPassword) {
+    public String resetPassword(@Email String email, String newPassword, String confirmPassword) {
         Optional<Account> accountOpt = accountRepository.findByEmail(email);
         if (accountOpt.isEmpty()) {
             return "Email không tồn tại!";

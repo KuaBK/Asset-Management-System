@@ -6,6 +6,7 @@ import com.example.asset_management.service.AssetService;
 import jakarta.activation.DataSource;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.mail.util.ByteArrayDataSource;
+import jakarta.validation.constraints.Email;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
@@ -121,7 +122,7 @@ public class CheckService {
         }
     }
 
-    public void checkAssets(String email) {
+    public void checkAssets(@Email String email) {
         assetService.updateResidualValues();
 
         List<Asset> expiredAssets = assetRepository.findByExpireDateBefore(LocalDate.now());

@@ -8,6 +8,7 @@ import com.example.asset_management.repository.RoomRepository;
 import com.example.asset_management.service.AssetService;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
+import jakarta.validation.constraints.Email;
 import lombok.RequiredArgsConstructor;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -146,7 +147,7 @@ public class EmailService {
         return tempFile;
     }
 
-    public void sendReport(String recipient, String subject, String body, File attachment) throws MessagingException {
+    public void sendReport(@Email String recipient, String subject, String body, File attachment) throws MessagingException {
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, true);
 
