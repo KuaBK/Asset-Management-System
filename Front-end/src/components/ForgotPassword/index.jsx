@@ -21,7 +21,7 @@ const ForgotPassword = () => {
             return;
         }
         try {
-            const response = await fetch(`http://localhost:8080/api/account/forgot-password?email=${email}`, {
+            const response = await fetch(`https://asset-management-system-95e0.onrender.com/api/account/forgot-password?email=${email}`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -44,7 +44,7 @@ const ForgotPassword = () => {
     const handleConfirmOtp = async () => {
         try {
             const response = await fetch(
-                `http://localhost:8080/api/account/confirm-otp?email=${email}&otp=${otp}`,
+                `https://asset-management-system-95e0.onrender.com/api/account/confirm-otp?email=${email}&otp=${otp}`,
                 {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
@@ -67,7 +67,7 @@ const ForgotPassword = () => {
             return;
         }
         try {
-            const response = await fetch(`http://localhost:8080/api/account/reset-password?email=${email}&newPassword=${newPassword}&confirmPassword=${confirmPassword}`, {
+            const response = await fetch(`https://asset-management-system-95e0.onrender.com/api/account/reset-password?email=${email}&newPassword=${newPassword}&confirmPassword=${confirmPassword}`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"

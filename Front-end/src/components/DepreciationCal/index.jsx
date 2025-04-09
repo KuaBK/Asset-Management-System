@@ -33,7 +33,7 @@ const DepreciationCal = () => {
     const fetchAssets = async () => {
       try {
         const response = await fetch(
-          `http://localhost:8080/api/asset/summary?year=${year}`,
+          `https://asset-management-system-95e0.onrender.com/api/asset/summary?year=${year}`,
           {
             method: "GET",
             headers: {
@@ -61,7 +61,7 @@ const DepreciationCal = () => {
     try {
       setSelectedAssetType(assetType);
       const response = await fetch(
-        `http://localhost:8080/api/asset/detail/byAssetType?year=${year}&assetType=${assetType}`,
+        `https://asset-management-system-95e0.onrender.com/api/asset/detail/byAssetType?year=${year}&assetType=${assetType}`,
         {
           method: "GET",
           headers: {
@@ -90,7 +90,7 @@ const DepreciationCal = () => {
     setLoading(true); // Bắt đầu loading
     try {
       const response = await fetch(
-        `http://localhost:8080/api/report/check?email=${email}`,
+        `https://asset-management-system-95e0.onrender.com/api/report/check?email=${email}`,
         {
           method: "GET",
           headers: { Authorization: `Bearer ${token}` },
@@ -115,7 +115,7 @@ const DepreciationCal = () => {
     setLoading(true); // Bắt đầu loading
     try {
       const response = await fetch(
-        `http://localhost:8080/api/report/send?buildingId=${building}&roomId=${room}&assetType=${type}&email=${email}`,
+        `https://asset-management-system-95e0.onrender.com/api/report/send?buildingId=${building}&roomId=${room}&assetType=${type}&email=${email}`,
         {
           method: "POST",
           headers: { Authorization: `Bearer ${token}` },
@@ -133,7 +133,7 @@ const DepreciationCal = () => {
   const handleDownloadExcel = async () => {
     try {
       const response = await fetch(
-        `http://localhost:8080/api/report/export-excel?buildingId=${building}&roomId=${room}&assetType=${type}`,
+        `https://asset-management-system-95e0.onrender.com/api/report/export-excel?buildingId=${building}&roomId=${room}&assetType=${type}`,
         {
           method: "GET",
           headers: { Authorization: `Bearer ${token}` },

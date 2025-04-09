@@ -29,7 +29,7 @@ const BuildingDetail = () => {
     }
 
     try {
-      const response = await fetch('http://localhost:8080/api/auth/introspect', {
+      const response = await fetch('https://asset-management-system-95e0.onrender.com/api/auth/introspect', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -69,7 +69,7 @@ const BuildingDetail = () => {
     }
 
     try {
-      const response = await fetch('http://localhost:8080/api/auth/refresh', {
+      const response = await fetch('https://asset-management-system-95e0.onrender.com/api/auth/refresh', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -119,7 +119,7 @@ const BuildingDetail = () => {
         const token = localStorage.getItem('TOKEN');
 
         // Fetch building assets summary
-        const summaryResponse = await fetch('http://localhost:8080/api/buildings/assets-summary', {
+        const summaryResponse = await fetch('https://asset-management-system-95e0.onrender.com/api/buildings/assets-summary', {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -143,7 +143,7 @@ const BuildingDetail = () => {
 
         // Fetch room data with numeric ID
         // const roomResponse = await fetch(`http://localhost:8080/api/room/infor/${id.replace('h', '')}`, {
-          const roomResponse = await fetch(`http://localhost:8080/api/room/infor/${convertID(id)}`, {
+          const roomResponse = await fetch(`https://asset-management-system-95e0.onrender.com/api/room/infor/${convertID(id)}`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }

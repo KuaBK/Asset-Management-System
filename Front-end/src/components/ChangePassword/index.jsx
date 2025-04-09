@@ -59,7 +59,7 @@ const ChangePassword = () => {
         }
 
         try {
-            const response = await fetch(`http://localhost:8080/api/account/${userId}`, {
+            const response = await fetch(`https://asset-management-system-95e0.onrender.com/api/account/${userId}`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",

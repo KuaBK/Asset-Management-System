@@ -347,7 +347,7 @@ const OverView = () => {
         var token = localStorage.getItem("TOKEN");
         const fetchAssetSummary = async () => {
             try {
-                const response = await fetch("http://localhost:8080/api/buildings/assets-summary",{
+                const response = await fetch("https://asset-management-system-95e0.onrender.com/api/buildings/assets-summary",{
                     headers: {
                         "Content-Type": "application/json",
                         "Authorization": `Bearer ${token}`
@@ -371,7 +371,7 @@ const OverView = () => {
         };
         const fetchAssetTotal = async () => {
             try {
-                const response = await fetch("http://localhost:8080/api/buildings/total/infor",{
+                const response = await fetch("https://asset-management-system-95e0.onrender.com/api/buildings/total/infor",{
                     headers: {
                         "Content-Type": "application/json",
                         "Authorization": `Bearer ${token}`

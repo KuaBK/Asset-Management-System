@@ -25,7 +25,7 @@ const History = () => {
         const token = localStorage.getItem("TOKEN");
         const fetchLog = async () => {
             try {
-                const response = await fetch("http://localhost:8080/api/asset-log", {
+                const response = await fetch("https://asset-management-system-95e0.onrender.com/api/asset-log", {
                     headers: {
                         "Content-Type": "application/json",
                         "Authorization": `Bearer ${token}`

@@ -48,7 +48,7 @@ const ItemFaultyList = ({ buildingId, roomId, onClose }) => {
         const counts = {};
         for (const type of assetTypes) {
           const response = await fetch(
-            `http://localhost:8080/api/asset/list/broken?buildingId=${buildingId}&roomId=${buildingId + "" + roomId}&assetType=${type}`,
+            `https://asset-management-system-95e0.onrender.com/api/asset/list/broken?buildingId=${buildingId}&roomId=${buildingId + "" + roomId}&assetType=${type}`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -65,7 +65,7 @@ const ItemFaultyList = ({ buildingId, roomId, onClose }) => {
 
         // Fetch detailed data for selected asset type
         const selectedResponse = await fetch(
-          `http://localhost:8080/api/asset/list/broken?buildingId=${buildingId}&roomId=${buildingId + "" + roomId}&assetType=${assetType}`,
+          `https://asset-management-system-95e0.onrender.com/api/asset/list/broken?buildingId=${buildingId}&roomId=${buildingId + "" + roomId}&assetType=${assetType}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

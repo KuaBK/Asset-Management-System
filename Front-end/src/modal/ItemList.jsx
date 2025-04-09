@@ -23,7 +23,7 @@ const ItemList = ({ onClose, buildingId, roomId }) => {
   useEffect(() => {
     const token = localStorage.getItem("TOKEN");
     if (token) {
-      fetch("http://localhost:8080/api/auth/introspect", {
+      fetch("https://asset-management-system-95e0.onrender.com/api/auth/introspect", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ token }),
@@ -46,7 +46,7 @@ const ItemList = ({ onClose, buildingId, roomId }) => {
 
     const token = localStorage.getItem("TOKEN");
     if (buildingId === 6) {buildingId = 4;}
-    fetch(`http://localhost:8080/api/asset/count/Room-Building?buildingId=${buildingId}&roomId=${buildingId + "" + roomId}`, {
+    fetch(`https://asset-management-system-95e0.onrender.com/api/asset/count/Room-Building?buildingId=${buildingId}&roomId=${buildingId + "" + roomId}`, {
       
       headers: {
         "Content-Type": "application/json",
