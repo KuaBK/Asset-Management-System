@@ -20,7 +20,7 @@ public class CorsConfig  {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
 
-        config.setAllowedOrigins(Arrays.asList(https://asset-management-system-fxjylpvyg-kuabks-projects.vercel.app/", "http://localhost:8080/api", "http://localhost:5173"));
+        config.setAllowedOrigins(Arrays.asList("https://asset-management-system-fxjylpvyg-kuabks-projects.vercel.app/", "https://asset-management-system-git-main-kuabks-projects.vercel.app/", "https://asset-management-system-xi.vercel.app/"));
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         config.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "X-Requested-With"));
         config.setAllowCredentials(true);
