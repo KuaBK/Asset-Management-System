@@ -3,6 +3,8 @@ import Modal from "react-modal";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import hcmutbg from "../../assets/bg-hcmut.svg";
+import eye from '../../assets/eye.svg';
+import eyeBlind from '../../assets/eye-blind.svg';
 
 Modal.setAppElement("#root");
 
@@ -14,6 +16,8 @@ const ForgotPassword = () => {
     const [confirmPassword, setConfirmPassword] = useState("");
     const [isOtpModalOpen, setOtpModalOpen] = useState(false);
     const [isResetModalOpen, setResetModalOpen] = useState(false);
+    const [showNewPassword, setShowNewPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
     const handleForgotPassword = async () => {
         if (!email) {
@@ -28,10 +32,12 @@ const ForgotPassword = () => {
                 },
             });
 
-            const data = await response.json(); // Lấy dữ liệu từ API
-
-            if (!response.ok) {
-                throw new Error(data.message || "Email not found!"); // Lấy thông báo lỗi từ server
+            const contentType = response.headers.get("content-type");
+            if (contentType && contentType.includes("application/json")) {
+                const data = await response.json();
+                if (!response.ok) {
+                    throw new Error(data.message || "Email not found!"); // Lấy thông báo lỗi từ server
+                }
             }
 
             Swal.fire({ icon: "success", title: "Success", text: "OTP has been sent to your email." });
@@ -137,34 +143,55 @@ const ForgotPassword = () => {
 
             {/* Reset Password Modal */}
             <Modal
-                isOpen={isResetModalOpen}
-                onRequestClose={() => setResetModalOpen(false)}
-                className="fixed inset-0 flex items-center justify-center z-50"
-            >
-                <div className="relative flex flex-col gap-4 max-w-md w-full h-auto rounded-xl bg-clip-border text-gray-700 px-6 py-8 bg-[rgba(255,255,255,0.2)] backdrop-blur-md shadow-[0_0_30px_#5BA1F2]">
-                    <h3 className="text-3xl font-bold text-[#5BA1F2] text-center">Reset Password</h3>
-                    <input
-                        type="password"
-                        value={newPassword}
-                        onChange={(e) => setNewPassword(e.target.value)}
-                        placeholder="New Password"
-                        className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-                    />
-                    <input
-                        type="password"
-                        value={confirmPassword}
-                        onChange={(e) => setConfirmPassword(e.target.value)}
-                        placeholder="Confirm Password"
-                        className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-                    />
-                    <button
-                        onClick={handleResetPassword}
-                        className="block w-full select-none rounded-lg bg-gradient-to-tr from-[#21107a] to-[#5BA1F2] py-3 px-6 text-center align-middle font-sans text-[16px] font-bold uppercase text-white shadow-md shadow-[#21107a] transition-all hover:shadow-lg hover:shadow-[#5BA1F2] active:opacity-[0.85] disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
-                    >
-                        Reset Password
-                    </button>
-                </div>
-            </Modal>
+    isOpen={isResetModalOpen}
+    onRequestClose={() => setResetModalOpen(false)}
+    className="fixed inset-0 flex items-center justify-center z-50"
+>
+    <div className="relative flex flex-col gap-4 max-w-md w-full h-auto rounded-xl bg-clip-border text-gray-700 px-6 py-8 bg-[rgba(255,255,255,0.2)] backdrop-blur-md shadow-[0_0_30px_#5BA1F2]">
+        <h3 className="text-3xl font-bold text-[#5BA1F2] text-center">Reset Password</h3>
+
+        {/* New Password */}
+        <div className="relative w-full">
+            <input
+                type={showNewPassword ? "text" : "password"}
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                placeholder="New Password"
+                className="w-full p-2 pr-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+            />
+            <img
+                src={showNewPassword ? eyeBlind : eye}
+                alt="Toggle"
+                onClick={() => setShowNewPassword(!showNewPassword)}
+                className="absolute top-2.5 right-2 w-6 h-6 cursor-pointer"
+            />
+        </div>
+
+        {/* Confirm Password */}
+        <div className="relative w-full">
+            <input
+                type={showConfirmPassword ? "text" : "password"}
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder="Confirm Password"
+                className="w-full p-2 pr-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+            />
+            <img
+                src={showConfirmPassword ? eyeBlind : eye}
+                alt="Toggle"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                className="absolute top-2.5 right-2 w-6 h-6 cursor-pointer"
+            />
+        </div>
+
+        <button
+            onClick={handleResetPassword}
+            className="block w-full select-none rounded-lg bg-gradient-to-tr from-[#21107a] to-[#5BA1F2] py-3 px-6 text-center align-middle font-sans text-[16px] font-bold uppercase text-white shadow-md shadow-[#21107a] transition-all hover:shadow-lg hover:shadow-[#5BA1F2] active:opacity-[0.85] disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+        >
+            Reset Password
+        </button>
+    </div>
+</Modal>
         </div>
     );
 };

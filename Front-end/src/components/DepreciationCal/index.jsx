@@ -31,6 +31,7 @@ const DepreciationCal = () => {
 
   useEffect(() => {
     const fetchAssets = async () => {
+      setLoading(true); // Bắt đầu loading
       try {
         const response = await fetch(
           `https://asset-management-system-95e0.onrender.com/api/asset/summary?year=${year}`,
@@ -51,6 +52,8 @@ const DepreciationCal = () => {
         setAssets(data.result);
       } catch (error) {
         console.error("Error fetching asset details:", error);
+      } finally {
+        setLoading(false); // Kết thúc loading
       }
     };
 
@@ -58,6 +61,7 @@ const DepreciationCal = () => {
   }, [year, token]);
 
   const fetchAssetDetail = async (assetType) => {
+    setLoading(true); // Bắt đầu loading
     try {
       setSelectedAssetType(assetType);
       const response = await fetch(
@@ -79,6 +83,8 @@ const DepreciationCal = () => {
       setSelectedAsset(data.result);
     } catch (error) {
       console.error("Error fetching asset detail:", error);
+    } finally {
+      setLoading(false); // Kết thúc loading
     }
   };
 
@@ -413,6 +419,11 @@ const DepreciationCal = () => {
                 onChange={(e) => setEmail(e.target.value)}
               />
             </div>
+            {loading && (
+              <p className="text-center text-blue-600 font-semibold mt-4">
+                Please wait, sending email...
+              </p>
+            )}  
             <div className="mt-4 flex justify-end gap-2">
               <button
                 onClick={() => setShowModalEmail(false)}
